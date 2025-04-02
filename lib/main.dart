@@ -7,6 +7,8 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -14,7 +16,7 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'Login App',
         theme: ThemeData(primarySwatch: Colors.blue),
-        home: LoginScreen(),
+        home: LoginPage(),
       ),
     );
   }

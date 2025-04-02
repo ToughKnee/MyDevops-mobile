@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ez_validator/ez_validator.dart';
+import 'package:mobile/src/auth/auth.dart';
 
-// Authentication state management using Bloc
 class AuthCubit extends Cubit<bool> {
   // Initial state is false (not authenticated)
   AuthCubit() : super(false);
@@ -13,18 +12,8 @@ class AuthCubit extends Cubit<bool> {
   }
 }
 
-
-// Login screen widget
-class LoginScreen extends StatefulWidget {
-  @override
-  _LoginScreenState createState() => _LoginScreenState();
-}
-
-class _LoginScreenState extends State<LoginScreen> {
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
-  final _formKey = GlobalKey<FormState>();
-  bool _isPasswordVisible = false;
+class LoginPage extends StatelessWidget {
+  const LoginPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -32,99 +21,36 @@ class _LoginScreenState extends State<LoginScreen> {
       appBar: AppBar(title: Text('Login')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              _buildEmailField(), // Email input field
-              _buildPasswordField(), // Password input field
-              SizedBox(height: 20),
-              _buildLoginButton(context), // Login button
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  // Method to build the email input field
-  Widget _buildEmailField() {
-    return TextFormField(
-      controller: _emailController,
-      keyboardType: TextInputType.emailAddress,
-      decoration: InputDecoration(labelText: 'Email'),
-      validator: (value) {
-        final validator = EzValidator<String>()
-            .required()
-            .email()
-            .validate(value);
-        // Validates if the email ends with @ucr.ac.cr
-        if (validator != null) return validator;
-        if (!value!.endsWith("@ucr.ac.cr")) {
-          return "Email must end with @ucr.ac.cr";
-        }
-        return null;
-      },
-    );
-  }
-
-  // Method to build the password input field
-  Widget _buildPasswordField() {
-    return TextFormField(
-      controller: _passwordController,
-      obscureText: !_isPasswordVisible,
-      decoration: InputDecoration(
-        labelText: 'Password',
-        suffixIcon: IconButton(
-          icon: Icon(
-            _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
-          ),
-          onPressed: () {
-            setState(() {
-              _isPasswordVisible = !_isPasswordVisible;
-            });
-          },
-        ),
-      ),
-      validator: (value) => EzValidator<String>().required().minLength(8).validate(value),
-    );
-  }
-
-  // Method to build the login button
-  Widget _buildLoginButton(BuildContext context) {
-    return BlocConsumer<AuthCubit, bool>(
-      listener: (context, isAuthenticated) {
-        if (isAuthenticated) {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => HomeScreen()),
-          );
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Invalid credentials')),
-          );
-        }
-      },
-      builder: (context, isAuthenticated) {
-        return ElevatedButton(
-          onPressed: () {
-            if (_formKey.currentState!.validate()) {
-              context.read<AuthCubit>().login(
-                _emailController.text,
-                _passwordController.text,
+        child: BlocConsumer<AuthCubit, bool>(
+          listener: (context, isAuthenticated) {
+            if (isAuthenticated) {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => HomePage()),
               );
+            } else {
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(SnackBar(content: Text('Invalid credentials')));
             }
           },
-          child: Text('Login'),
-        );
-      },
+          builder: (context, isAuthenticated) {
+            return LoginForm(
+              onLogin: (email, password) {
+                context.read<AuthCubit>().login(email, password);
+              },
+            );
+          },
+        ),
+      ),
     );
   }
 }
 
-// Home screen displayed after successful login
-class HomeScreen extends StatelessWidget {
+// TODO: Redirect to the actual home screen of the app
+class HomePage extends StatelessWidget {
+  const HomePage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -133,4 +59,3 @@ class HomeScreen extends StatelessWidget {
     );
   }
 }
-
