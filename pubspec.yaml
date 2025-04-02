@@ -32,7 +32,7 @@ dependencies:
     sdk: flutter
 
   flutter_bloc: ^9.1.0
-
+  ez_validator: any
   equatable: ^2.0.7
 
   # The following adds the Cupertino Icons font to your application.
