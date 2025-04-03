@@ -1,3 +1,5 @@
+// see https://dummyjson.com/docs/auth
+
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
@@ -22,10 +24,10 @@ class LoginRepositoryDummy implements LoginRepository {
           username: data['username'],
         );
       } else {
-        throw Exception(data['message'] ?? 'Unknown error');
+        throw (data['message'] ?? 'Unknown error');
       }
     } catch (e) {
-      throw Exception('Error: $e');
+      rethrow;
     }
   }
 }

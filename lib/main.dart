@@ -11,12 +11,28 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => AuthCubit(),
-      child: MaterialApp(
-        title: 'Login App',
-        theme: ThemeData(primarySwatch: Colors.blue),
-        home: LoginPage(),
+    return MultiRepositoryProvider(
+      providers: [
+        RepositoryProvider<LoginRepository>(
+          create: (context) => LoginRepositoryDummy(),
+        ),
+      ],
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider<LoginBloc>(
+            create:
+                (context) =>
+                    LoginBloc(loginRepository: context.read<LoginRepository>()),
+          ),
+        ],
+        child: MaterialApp(
+          title: 'Tu App',
+          theme: ThemeData(
+            primarySwatch: Colors.blue,
+            visualDensity: VisualDensity.adaptivePlatformDensity,
+          ),
+          home: const LoginPage(),
+        ),
       ),
     );
   }

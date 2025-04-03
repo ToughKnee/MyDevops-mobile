@@ -2,16 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mobile/src/auth/auth.dart';
 
-class AuthCubit extends Cubit<bool> {
-  // Initial state is false (not authenticated)
-  AuthCubit() : super(false);
-
-  // Method to validate login credentials
-  void login(String email, String password) {
-    emit(email == "admin@ucr.ac.cr" && password == "password123");
-  }
-}
-
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
 
@@ -21,24 +11,34 @@ class LoginPage extends StatelessWidget {
       appBar: AppBar(title: Text('Login')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: BlocConsumer<AuthCubit, bool>(
-          listener: (context, isAuthenticated) {
-            if (isAuthenticated) {
+        child: BlocConsumer<LoginBloc, LoginState>(
+          listener: (context, state) {
+            if (state is LoginSuccess) {
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (context) => HomePage()),
+                MaterialPageRoute(builder: (context) => const HomePage()),
               );
-            } else {
+            } else if (state is LoginFailure) {
               ScaffoldMessenger.of(
                 context,
-              ).showSnackBar(SnackBar(content: Text('Invalid credentials')));
+              ).showSnackBar(SnackBar(content: Text(state.error)));
             }
           },
-          builder: (context, isAuthenticated) {
-            return LoginForm(
-              onLogin: (email, password) {
-                context.read<AuthCubit>().login(email, password);
-              },
+          builder: (context, state) {
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                if (state is LoginLoading)
+                  const Center(child: CircularProgressIndicator())
+                else
+                  LoginForm(
+                    onLogin: (username, password) {
+                      context.read<LoginBloc>().add(
+                        LoginSubmitted(username: username, password: password),
+                      );
+                    },
+                  ),
+              ],
             );
           },
         ),
