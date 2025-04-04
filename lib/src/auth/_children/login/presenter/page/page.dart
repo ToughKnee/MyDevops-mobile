@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mobile/core/theme/app_theme.dart';
 import 'package:mobile/src/auth/auth.dart';
 
 class LoginPage extends StatelessWidget {
