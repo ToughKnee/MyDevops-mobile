@@ -24,7 +24,7 @@ class LoginRepositoryDummy implements LoginRepository {
           username: data['username'],
         );
       } else {
-        throw (data['message'] ?? 'Unknown error');
+        throw AuthException(data['message'] ?? 'Authentication failed');
       }
     } catch (e) {
       rethrow;
