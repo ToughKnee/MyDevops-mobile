@@ -112,4 +112,26 @@ lib/generated_plugin_registrant.dart
 !**/ios/**/default.perspectivev3
 !/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
 
-# End of https://www.toptal.com/developers/gitignore/api/flutter
+# Ignore environment files
+.env
+.env.*
+
+
+# Ignore firebase config files
+firebase_options.dart
+firebase_options_ios.dart
+firebase_options_android.dart
+firebase_options_macos.dart
+firebase_options_web.dart
+firebase_options_linux.dart
+firebase_options_windows.dart
+firebase_options.dart
+firebase_options_ios.dart
+firebase_options_android.dart
+firebase_options_macos.dart
+firebase_options_web.dart
+firebase_options_linux.dart
+firebase_options_windows.dart
+
+google-services.json
+firebase.json
