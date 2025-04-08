@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mobile/src/auth/_children/login/presenter/widgets/button.dart';
+import 'package:mobile/core/globals/widgets/primary_button.dart';
 import 'package:mobile/src/auth/auth.dart';
 
 class LoginForm extends StatefulWidget {
@@ -127,21 +127,15 @@ class LoginFormState extends State<LoginForm> {
 
   // Method to build the login button
   Widget _buildLoginButton() {
-    return LoginButton(
+    return PrimaryButton(
       onPressed: () {
         if (_formKey.currentState!.validate()) {
           widget.onLogin(_emailController.text, _passwordController.text);
         }
       },
       isLoading: false,
-      text: Text(
-        'Login',
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 18,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
+      text: 'Login', // ✅ ahora es solo un String
     );
   }
+
 }
