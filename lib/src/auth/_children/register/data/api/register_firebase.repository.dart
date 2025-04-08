@@ -20,8 +20,6 @@ class RegisterRepositoryFirebase implements RegisterRepository {
       if (firebaseUser == null) {
         throw AuthException('Unexpected error: user is null after creation.');
       }
-
-      await firebaseUser.sendEmailVerification();
       
       return User(
         id: firebaseUser.uid,
