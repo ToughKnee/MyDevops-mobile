@@ -21,9 +21,19 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
 
     try {
       final user = await registerRepository.register(event.username, event.password);
-      emit(RegisterEmailVerificationSent(email: user.email));
+      // emit(RegisterEmailVerificationSent(email: user.email));
+      emit(RegisterSuccess(user: user));
     } on AuthException catch (e) {
-      emit(RegisterFailure(error: e.message));
+      final msg = e.message;
+      if (msg == 'Email already in use') {
+        emit(RegisterFailure(error: 'This email is already registered. Please log in or reset your password.'));
+      } else if (msg == 'Invalid email format') {
+        emit(RegisterFailure(error: 'The email address is not valid.'));
+      } else if (msg == 'Weak password') {
+        emit(RegisterFailure(error: 'The password is too weak. Please choose a stronger one.'));
+      } else {
+        emit(RegisterFailure(error: msg));
+      }
     } catch (e) {
       emit(RegisterFailure(error: 'Unexpected error'));
     }
