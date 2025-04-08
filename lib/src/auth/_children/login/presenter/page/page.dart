@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mobile/core/core.dart';
 import 'package:mobile/src/auth/auth.dart';
 
 class LoginPage extends StatelessWidget {
@@ -56,7 +57,7 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('Home')),
-      body: Center(child: Text('Welcome!')),
+      body: Center(child: Text('Welcome ${LocalStorage().userEmail}')),
     );
   }
 }

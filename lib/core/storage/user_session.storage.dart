@@ -1,60 +1,78 @@
-import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:mobile/src/auth/auth.dart';
 
-class UserSessionStorage {
-  static const String _userKey = 'user_data';
+class LocalStorage {
+  final SharedPreferences _prefs;
 
-  static Future<bool> saveUser(User user) async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    try {
-      final userData = jsonEncode({
-        'id': user.id,
-        'username': user.username,
-        'email': user.email,
-      });
+  // Private constructor
+  LocalStorage._privateConstructor(this._prefs);
 
-      return await prefs.setString(_userKey, userData);
-    } catch (e) {
-      print('Error saving user data: $e');
-      return false;
+  // Singleton instance
+  static LocalStorage? _instance;
+
+  // Public factory method to get the singleton instance
+  static Future<LocalStorage> init() async {
+    if (_instance == null) {
+      final prefs = await SharedPreferences.getInstance();
+      _instance = LocalStorage._privateConstructor(prefs);
     }
+    return _instance!;
   }
 
-  static Future<User?> getUser() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    final userData = prefs.getString(_userKey);
-
-    if (userData == null) {
-      return null;
-    }
-
-    try {
-      final Map<String, dynamic> userMap = jsonDecode(userData);
-      return User(
-        id: userMap['id'],
-        username: userMap['username'],
-        email: userMap['email'],
+  // Factory constructor to get existing instance
+  factory LocalStorage() {
+    if (_instance == null) {
+      throw Exception(
+        "LocalStorage not initialized. Call LocalStorage.init() first.",
       );
-    } catch (e) {
-      print('Error retrieving user data: $e');
-      return null;
     }
+    return _instance!;
   }
 
-  static Future<bool> isLoggedIn() async {
-    try {
-      final user = await getUser();
-      return user != null;
-    } catch (e) {
-      print('Error checking login status: $e');
-      return false;
-    }
+  // Access token
+  set accessToken(String token) => _prefs.setString('accessToken', token);
+  String get accessToken => _prefs.getString('accessToken') ?? '';
+
+  // Refresh token
+  set refreshToken(String token) => _prefs.setString('refreshToken', token);
+  String get refreshToken => _prefs.getString('refreshToken') ?? '';
+
+  // User ID
+  set userId(String id) => _prefs.setString('userId', id);
+  String get userId => _prefs.getString('userId') ?? '';
+
+  // Username
+  set username(String username) => _prefs.setString('username', username);
+  String get username => _prefs.getString('username') ?? '';
+
+  // User email
+  set userEmail(String email) => _prefs.setString('userEmail', email);
+  String get userEmail => _prefs.getString('userEmail') ?? '';
+
+  // Check if user is logged in
+  bool get isLoggedIn => accessToken.isNotEmpty && userId.isNotEmpty;
+
+  void saveUserData({
+    required String id,
+    required String username,
+    required String email,
+    required String token,
+  }) {
+    userId = id;
+    this.username = username;
+    userEmail = email;
+    accessToken = token;
   }
 
-  static Future<bool> clearUser() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    return await prefs.remove(_userKey);
+  // Clear all stored data
+  Future<void> clear() async {
+    await _prefs.clear();
+  }
+
+  // Clear only user-related data
+  Future<void> clearUserData() async {
+    await _prefs.remove('accessToken');
+    await _prefs.remove('userId');
+    await _prefs.remove('username');
+    await _prefs.remove('userEmail');
   }
 }

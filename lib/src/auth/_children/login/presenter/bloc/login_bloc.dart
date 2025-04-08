@@ -26,7 +26,9 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     try {
       final user = await loginRepository.login(event.username, event.password);
 
-      await UserSessionStorage.saveUser(user);
+      LocalStorage().userId = user.id;
+      LocalStorage().username = user.username;
+      LocalStorage().userEmail = user.email;
 
       emit(LoginSuccess(user: user));
     } on AuthException catch (e) {
