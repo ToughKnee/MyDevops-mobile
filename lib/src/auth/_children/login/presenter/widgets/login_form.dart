@@ -31,7 +31,23 @@ class LoginFormState extends State<LoginForm> {
           Container(
             margin: const EdgeInsets.symmetric(horizontal: 25.0),
             child: _buildLoginButton(),
-          ) 
+          ),
+          SizedBox(height: 10),
+          TextButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const RegisterPage()),
+              );
+            },
+            child: const Text(
+              'Register',
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
         ],
       ),
     );
