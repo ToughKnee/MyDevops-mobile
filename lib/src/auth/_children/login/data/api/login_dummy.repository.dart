@@ -7,7 +7,7 @@ import 'package:mobile/src/auth/auth.dart';
 
 class LoginRepositoryDummy implements LoginRepository {
   @override
-  Future<User> login(String username, String password) async {
+  Future<AuthUserInfo> login(String username, String password) async {
     try {
       final response = await http.post(
         Uri.parse('https://dummyjson.com/auth/login'),
@@ -18,10 +18,10 @@ class LoginRepositoryDummy implements LoginRepository {
       final data = jsonDecode(response.body);
 
       if (response.statusCode == 200) {
-        return User(
+        return AuthUserInfo(
           id: data['id'].toString(),
           email: data['email'],
-          username: data['username'],
+          authProviderToken: data['username'],
         );
       } else {
         throw AuthException(data['message'] ?? 'Authentication failed');
