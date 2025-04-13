@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LocalStorage {
@@ -16,6 +17,18 @@ class LocalStorage {
       _instance = LocalStorage._privateConstructor(prefs);
     }
     return _instance!;
+  }
+
+  // For testing purposes, allows creating an instance with a mock SharedPreferences
+  @visibleForTesting
+  factory LocalStorage.withPrefs(SharedPreferences prefs) {
+    return LocalStorage._privateConstructor(prefs);
+  }
+
+  // For testing purposes, allows resetting the singleton instance
+  @visibleForTesting
+  static void resetInstance() {
+    _instance = null;
   }
 
   // Factory constructor to get existing instance
@@ -51,28 +64,8 @@ class LocalStorage {
   // Check if user is logged in
   bool get isLoggedIn => accessToken.isNotEmpty && userId.isNotEmpty;
 
-  void saveUserData({
-    required String id,
-    required String username,
-    required String email,
-    required String token,
-  }) {
-    userId = id;
-    this.username = username;
-    userEmail = email;
-    accessToken = token;
-  }
-
   // Clear all stored data
   Future<void> clear() async {
     await _prefs.clear();
-  }
-
-  // Clear only user-related data
-  Future<void> clearUserData() async {
-    await _prefs.remove('accessToken');
-    await _prefs.remove('userId');
-    await _prefs.remove('username');
-    await _prefs.remove('userEmail');
   }
 }

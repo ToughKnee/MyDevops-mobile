@@ -60,6 +60,7 @@ void main() {
         );
       },
     );
+
     test(
       'should return error when password does not contain lowercase letter',
       () {
@@ -70,6 +71,7 @@ void main() {
         );
       },
     );
+
     test('should return error when password does not contain number', () {
       final result = UserValidator.validatePass('NoNumber');
       expect(result, 'The password must contain at least one number');
