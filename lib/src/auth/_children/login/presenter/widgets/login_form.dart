@@ -31,19 +31,20 @@ class LoginFormState extends State<LoginForm> {
           Container(
             margin: const EdgeInsets.symmetric(horizontal: 25.0),
             child: _buildLoginButton(),
-          ) 
+          ),
         ],
       ),
     );
   }
 
-  Widget _forgotPasswordField(){
+  Widget _forgotPasswordField() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 25.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          Text('Forgot Password?',
+          Text(
+            'Forgot Password?',
             style: TextStyle(
               color: Theme.of(context).colorScheme.primary,
               fontSize: 14,
@@ -54,6 +55,7 @@ class LoginFormState extends State<LoginForm> {
       ),
     );
   }
+
   // Method to build the email input field
   Widget _buildEmailField() {
     return Padding(
@@ -64,13 +66,18 @@ class LoginFormState extends State<LoginForm> {
         decoration: InputDecoration(
           labelText: 'Email',
           enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Theme.of(context).colorScheme.outline),
+            borderSide: BorderSide(
+              color: Theme.of(context).colorScheme.outline,
+            ),
           ),
           focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Theme.of(context).colorScheme.primary),
+            borderSide: BorderSide(
+              color: Theme.of(context).colorScheme.primary,
+            ),
           ),
           fillColor: Colors.white,
-          filled: true,),
+          filled: true,
+        ),
         validator: UserValidator.validateEmail,
       ),
     );
@@ -86,10 +93,14 @@ class LoginFormState extends State<LoginForm> {
         decoration: InputDecoration(
           labelText: 'Password',
           enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Theme.of(context).colorScheme.outline),
+            borderSide: BorderSide(
+              color: Theme.of(context).colorScheme.outline,
+            ),
           ),
           focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Theme.of(context).colorScheme.primary),
+            borderSide: BorderSide(
+              color: Theme.of(context).colorScheme.primary,
+            ),
           ),
           fillColor: Colors.white,
           filled: true,
@@ -104,7 +115,6 @@ class LoginFormState extends State<LoginForm> {
             },
           ),
         ),
-        validator: UserValidator.validatePass,
       ),
     );
   }
