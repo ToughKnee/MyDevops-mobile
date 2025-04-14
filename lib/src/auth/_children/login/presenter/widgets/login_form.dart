@@ -3,16 +3,22 @@ import 'package:mobile/src/auth/_children/login/presenter/widgets/button.dart';
 import 'package:mobile/src/auth/auth.dart';
 
 class LoginForm extends StatefulWidget {
+  final TextEditingController emailController;
+  final TextEditingController passwordController;
   final Function(String, String) onLogin;
 
-  const LoginForm({super.key, required this.onLogin});
+  const LoginForm({
+    super.key,
+    required this.emailController,
+    required this.passwordController,
+    required this.onLogin,
+  });
+
   @override
-  LoginFormState createState() => LoginFormState();
+  State<LoginForm> createState() => LoginFormState();
 }
 
 class LoginFormState extends State<LoginForm> {
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   bool _isPasswordVisible = false;
 
@@ -61,7 +67,7 @@ class LoginFormState extends State<LoginForm> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 25.0),
       child: TextFormField(
-        controller: _emailController,
+        controller: widget.emailController,
         keyboardType: TextInputType.emailAddress,
         decoration: InputDecoration(
           labelText: 'Email',
@@ -88,7 +94,7 @@ class LoginFormState extends State<LoginForm> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 25.0),
       child: TextFormField(
-        controller: _passwordController,
+        controller: widget.passwordController,
         obscureText: !_isPasswordVisible,
         decoration: InputDecoration(
           labelText: 'Password',
@@ -124,7 +130,7 @@ class LoginFormState extends State<LoginForm> {
     return LoginButton(
       onPressed: () {
         if (_formKey.currentState!.validate()) {
-          widget.onLogin(_emailController.text, _passwordController.text);
+          widget.onLogin(widget.emailController.text, widget.passwordController.text);
         }
       },
       isLoading: false,
