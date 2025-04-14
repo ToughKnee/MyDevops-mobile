@@ -46,7 +46,7 @@ class _LoginPageState extends State<LoginPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 if (state is LoginLoading)
-                  const CircularProgressIndicator()
+                  const Center(child: CircularProgressIndicator())
                 else
                   LoginForm(
                     emailController: _emailController,
