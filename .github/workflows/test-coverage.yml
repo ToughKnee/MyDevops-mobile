@@ -1,5 +1,9 @@
 name: Flutter Tests & Coverage
 
+# Allow runners to get read only access to this repository files(set explicitly now because github requires it)
+permissions:
+  contents: read
+
 on:
   pull_request:
     branches: 
@@ -29,6 +33,9 @@ jobs:
         run: |
           docker build -t flutter-tests .
 
+      - name: Grant execute permission to entrypoint script
+        run: chmod +x /entrypoint.sh
+        
       - name: Run Docker container with tests
         run: |
           docker run --rm -v "$GITHUB_WORKSPACE":/app flutter-tests
