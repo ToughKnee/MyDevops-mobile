@@ -8,10 +8,10 @@ class RegisterRepositoryFirebase implements RegisterRepository {
       : _firebaseAuth = firebaseAuth ?? firebase.FirebaseAuth.instance;
 
   @override
-  Future<User> register(String username, String password) async {
+  Future<AuthUserInfo> register(String email, String password) async {
     try {
       final userData = await _firebaseAuth.createUserWithEmailAndPassword(
-        email: username,
+        email: email,
         password: password,
       );
 
@@ -20,11 +20,17 @@ class RegisterRepositoryFirebase implements RegisterRepository {
       if (firebaseUser == null) {
         throw AuthException('Unexpected error: user is null after creation.');
       }
+
+      final firebaseIdToken = await firebaseUser.getIdToken();
+
+      if (firebaseIdToken == null) {
+        throw AuthException('Failed authentication');
+      }
       
-      return User(
+      return AuthUserInfo(
         id: firebaseUser.uid,
         email: firebaseUser.email ?? '',
-        username: firebaseUser.displayName ?? username,
+        authProviderToken: firebaseIdToken,
       );
     } on firebase.FirebaseAuthException catch (e) {
       switch (e.code) {
