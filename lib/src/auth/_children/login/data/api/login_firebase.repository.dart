@@ -8,7 +8,7 @@ class LoginRepositoryFirebase implements LoginRepository {
     : _firebaseAuth = firebaseAuth ?? firebase.FirebaseAuth.instance;
 
   @override
-  Future<User> login(String username, String password) async {
+  Future<AuthUserInfo> login(String username, String password) async {
     try {
       final userData = await _firebaseAuth.signInWithEmailAndPassword(
         email: username,
@@ -17,18 +17,19 @@ class LoginRepositoryFirebase implements LoginRepository {
 
       final firebaseUser = userData.user;
 
-      if (firebaseUser == null) {
-        throw AuthException('User not found');
+      final firebaseIdToken = await firebaseUser!.getIdToken();
+
+      if (firebaseIdToken == null) {
+        throw AuthException('Failed authentication');
       }
 
-      return User(
+      return AuthUserInfo(
         id: firebaseUser.uid,
         email: firebaseUser.email ?? '',
-        username: firebaseUser.displayName ?? username,
+        authProviderToken: firebaseIdToken,
       );
     } on firebase.FirebaseAuthException catch (e) {
       switch (e.code) {
-        //TODO handle remaining error codes
         case 'user-not-found':
           throw AuthException('User not found');
         case 'invalid-email':

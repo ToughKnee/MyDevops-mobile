@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/core/storage/user_session.storage.dart';
 import 'package:mobile/src/auth/_children/_children.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'core/theme/theme.dart';
@@ -8,6 +9,8 @@ import 'firebase_options.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await LocalStorage.init();
+
   runApp(MyApp());
 }
 

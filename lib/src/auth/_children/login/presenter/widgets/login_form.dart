@@ -3,16 +3,22 @@ import 'package:mobile/core/globals/widgets/primary_button.dart';
 import 'package:mobile/src/auth/auth.dart';
 
 class LoginForm extends StatefulWidget {
+  final TextEditingController emailController;
+  final TextEditingController passwordController;
   final Function(String, String) onLogin;
 
-  const LoginForm({super.key, required this.onLogin});
+  const LoginForm({
+    super.key,
+    required this.emailController,
+    required this.passwordController,
+    required this.onLogin,
+  });
+
   @override
-  LoginFormState createState() => LoginFormState();
+  State<LoginForm> createState() => LoginFormState();
 }
 
 class LoginFormState extends State<LoginForm> {
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   bool _isPasswordVisible = false;
 
@@ -53,13 +59,14 @@ class LoginFormState extends State<LoginForm> {
     );
   }
 
-  Widget _forgotPasswordField(){
+  Widget _forgotPasswordField() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 25.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          Text('Forgot Password?',
+          Text(
+            'Forgot Password?',
             style: TextStyle(
               color: Theme.of(context).colorScheme.primary,
               fontSize: 14,
@@ -70,23 +77,29 @@ class LoginFormState extends State<LoginForm> {
       ),
     );
   }
+
   // Method to build the email input field
   Widget _buildEmailField() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 25.0),
       child: TextFormField(
-        controller: _emailController,
+        controller: widget.emailController,
         keyboardType: TextInputType.emailAddress,
         decoration: InputDecoration(
           labelText: 'Email',
           enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Theme.of(context).colorScheme.outline),
+            borderSide: BorderSide(
+              color: Theme.of(context).colorScheme.outline,
+            ),
           ),
           focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Theme.of(context).colorScheme.primary),
+            borderSide: BorderSide(
+              color: Theme.of(context).colorScheme.primary,
+            ),
           ),
           fillColor: Colors.white,
-          filled: true,),
+          filled: true,
+        ),
         validator: UserValidator.validateEmail,
       ),
     );
@@ -97,15 +110,19 @@ class LoginFormState extends State<LoginForm> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 25.0),
       child: TextFormField(
-        controller: _passwordController,
+        controller: widget.passwordController,
         obscureText: !_isPasswordVisible,
         decoration: InputDecoration(
           labelText: 'Password',
           enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Theme.of(context).colorScheme.outline),
+            borderSide: BorderSide(
+              color: Theme.of(context).colorScheme.outline,
+            ),
           ),
           focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Theme.of(context).colorScheme.primary),
+            borderSide: BorderSide(
+              color: Theme.of(context).colorScheme.primary,
+            ),
           ),
           fillColor: Colors.white,
           filled: true,
@@ -120,7 +137,6 @@ class LoginFormState extends State<LoginForm> {
             },
           ),
         ),
-        validator: UserValidator.validatePass,
       ),
     );
   }
@@ -130,7 +146,7 @@ class LoginFormState extends State<LoginForm> {
     return PrimaryButton(
       onPressed: () {
         if (_formKey.currentState!.validate()) {
-          widget.onLogin(_emailController.text, _passwordController.text);
+          widget.onLogin(widget.emailController.text, widget.passwordController.text);
         }
       },
       isLoading: false,

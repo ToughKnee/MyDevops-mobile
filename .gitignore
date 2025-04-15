@@ -116,22 +116,3 @@ lib/generated_plugin_registrant.dart
 .env
 .env.*
 
-
-# Ignore firebase config files
-firebase_options.dart
-firebase_options_ios.dart
-firebase_options_android.dart
-firebase_options_macos.dart
-firebase_options_web.dart
-firebase_options_linux.dart
-firebase_options_windows.dart
-firebase_options.dart
-firebase_options_ios.dart
-firebase_options_android.dart
-firebase_options_macos.dart
-firebase_options_web.dart
-firebase_options_linux.dart
-firebase_options_windows.dart
-
-google-services.json
-firebase.json
