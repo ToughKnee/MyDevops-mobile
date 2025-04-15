@@ -142,6 +142,7 @@ class LoginFormState extends State<LoginForm> {
           fontWeight: FontWeight.bold,
         ),
       ),
+      isEnabled: true,
     );
   }
 }
