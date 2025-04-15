@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:mobile/core/globals/widgets/primary_button.dart';
 import 'package:mobile/src/auth/auth.dart';
 
 class RegisterForm extends StatefulWidget {
-  final Function(String, String) onRegister;
+  final Function(String, String, String) onRegister;
 
   const RegisterForm({super.key, required this.onRegister});
 
@@ -12,6 +11,7 @@ class RegisterForm extends StatefulWidget {
 }
 
 class RegisterFormState extends State<RegisterForm> {
+  final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
@@ -25,6 +25,8 @@ class RegisterFormState extends State<RegisterForm> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          _buildNameField(),
+          const SizedBox(height: 20),
           _buildEmailField(),
           const SizedBox(height: 20),
           _buildPasswordField(),
@@ -36,6 +38,28 @@ class RegisterFormState extends State<RegisterForm> {
             child: _buildRegisterButton(),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildNameField() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 25.0),
+      child: TextFormField(
+        controller: _nameController,
+        keyboardType: TextInputType.emailAddress,
+        decoration: InputDecoration(
+          labelText: 'Name',
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Theme.of(context).colorScheme.outline),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Theme.of(context).colorScheme.primary),
+          ),
+          fillColor: Colors.white,
+          filled: true,
+        ),
+        validator: UserValidator.validateName,
       ),
     );
   }
@@ -125,11 +149,11 @@ class RegisterFormState extends State<RegisterForm> {
     return PrimaryButton(
       onPressed: () {
         if (_formKey.currentState!.validate()) {
-          widget.onRegister(_emailController.text, _passwordController.text);
+          widget.onRegister(_nameController.text, _emailController.text, _passwordController.text);
         }
       },
       isLoading: false,
-      text: 'Register', //  también un String
+      text: 'Register',
     );
   }
 }

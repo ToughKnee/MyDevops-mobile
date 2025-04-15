@@ -8,7 +8,7 @@ class RegisterRepositoryFirebase implements RegisterRepository {
       : _firebaseAuth = firebaseAuth ?? firebase.FirebaseAuth.instance;
 
   @override
-  Future<AuthUserInfo> register(String email, String password) async {
+  Future<AuthUserInfo> register(String name, String email, String password) async {
     try {
       final userData = await _firebaseAuth.createUserWithEmailAndPassword(
         email: email,
@@ -28,6 +28,7 @@ class RegisterRepositoryFirebase implements RegisterRepository {
       }
       
       return AuthUserInfo(
+        name: name,
         id: firebaseUser.uid,
         email: firebaseUser.email ?? '',
         authProviderToken: firebaseIdToken,

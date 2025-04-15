@@ -20,8 +20,8 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
     emit(RegisterLoading());
 
     try {
-      final user = await registerRepository.register(event.username, event.password);
-      // emit(RegisterEmailVerificationSent(email: user.email));
+      final user = await registerRepository.register(event.name, event.email, event.password);
+      //TODO BACKEND CALL
       emit(RegisterSuccess(user: user));
     } on AuthException catch (e) {
       final msg = e.message;

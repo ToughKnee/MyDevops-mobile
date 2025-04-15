@@ -47,9 +47,9 @@ class RegisterPage extends StatelessWidget {
                   const Center(child: CircularProgressIndicator())
                 else
                   RegisterForm(
-                    onRegister: (email, password) {
+                    onRegister: (name, email, password) {
                       context.read<RegisterBloc>().add(
-                            RegisterSubmitted(username: email, password: password),
+                            RegisterSubmitted(name: name, email: email, password: password),
                           );
                     },
                   ),
