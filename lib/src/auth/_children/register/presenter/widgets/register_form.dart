@@ -2,19 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:mobile/src/auth/auth.dart';
 
 class RegisterForm extends StatefulWidget {
+  final TextEditingController nameController;
+  final TextEditingController emailController;
+  final TextEditingController passwordController;
+  final TextEditingController confirmPasswordController;
   final Function(String, String, String) onRegister;
 
-  const RegisterForm({super.key, required this.onRegister});
+  const RegisterForm({
+    super.key,
+    required this.nameController,
+    required this.emailController,
+    required this.passwordController,
+    required this.confirmPasswordController,
+    required this.onRegister,
+  });
 
   @override
-  RegisterFormState createState() => RegisterFormState();
+  State<RegisterForm> createState() => RegisterFormState();
 }
 
 class RegisterFormState extends State<RegisterForm> {
-  final _nameController = TextEditingController();
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
-  final _confirmPasswordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   bool _isPasswordVisible = false;
 
@@ -46,7 +53,7 @@ class RegisterFormState extends State<RegisterForm> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 25.0),
       child: TextFormField(
-        controller: _nameController,
+        controller: widget.nameController,
         keyboardType: TextInputType.emailAddress,
         decoration: InputDecoration(
           labelText: 'Name',
@@ -68,7 +75,7 @@ class RegisterFormState extends State<RegisterForm> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 25.0),
       child: TextFormField(
-        controller: _emailController,
+        controller: widget.emailController,
         keyboardType: TextInputType.emailAddress,
         decoration: InputDecoration(
           labelText: 'Email',
@@ -90,7 +97,7 @@ class RegisterFormState extends State<RegisterForm> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 25.0),
       child: TextFormField(
-        controller: _passwordController,
+        controller: widget.passwordController,
         obscureText: !_isPasswordVisible,
         decoration: InputDecoration(
           labelText: 'Password',
@@ -122,7 +129,7 @@ class RegisterFormState extends State<RegisterForm> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 25.0),
       child: TextFormField(
-        controller: _confirmPasswordController,
+        controller: widget.confirmPasswordController,
         obscureText: !_isPasswordVisible,
         decoration: InputDecoration(
           labelText: 'Confirm Password',
@@ -136,7 +143,7 @@ class RegisterFormState extends State<RegisterForm> {
           filled: true,
         ),
         validator: (value) {
-          if (value != _passwordController.text) {
+          if (value != widget.passwordController.text) {
             return 'Passwords do not match';
           }
           return null;
@@ -149,7 +156,11 @@ class RegisterFormState extends State<RegisterForm> {
     return PrimaryButton(
       onPressed: () {
         if (_formKey.currentState!.validate()) {
-          widget.onRegister(_nameController.text, _emailController.text, _passwordController.text);
+          widget.onRegister(
+            widget.nameController.text,
+            widget.emailController.text,
+            widget.passwordController.text,
+          );
         }
       },
       isLoading: false,
