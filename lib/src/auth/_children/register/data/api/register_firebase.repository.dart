@@ -17,11 +17,7 @@ class RegisterRepositoryFirebase implements RegisterRepository {
 
       final firebaseUser = userData.user;
 
-      if (firebaseUser == null) {
-        throw AuthException('Unexpected error: user is null after creation.');
-      }
-
-      final firebaseIdToken = await firebaseUser.getIdToken();
+      final firebaseIdToken = await firebaseUser!.getIdToken();
 
       if (firebaseIdToken == null) {
         throw AuthException('Failed authentication');
@@ -46,9 +42,6 @@ class RegisterRepositoryFirebase implements RegisterRepository {
         default:
           throw AuthException('Failed to register, error: ${e.code}');
       }
-    } catch (e) {
-      throw AuthException('Unexpected error: $e');
     }
-
   }
 }
