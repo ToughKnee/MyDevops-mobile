@@ -1,5 +1,7 @@
 # mobile
 
+[![codecov](https://codecov.io/github/Practica-Supervisada-UCR-2025/mobile/graph/badge.svg?token=9DLEDB9J5G)](https://codecov.io/github/Practica-Supervisada-UCR-2025/mobile)
+
 A new Flutter project.
 
 ## Getting Started
