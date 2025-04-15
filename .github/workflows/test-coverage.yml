@@ -34,8 +34,8 @@ jobs:
           docker build -t flutter-tests .
 
       - name: Grant execute permission to entrypoint script
-        run: chmod +x /entrypoint.sh
-        
+        run: chmod +x ./entrypoint.sh
+
       - name: Run Docker container with tests
         run: |
           docker run --rm -v "$GITHUB_WORKSPACE":/app flutter-tests
