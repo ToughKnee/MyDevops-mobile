@@ -46,15 +46,7 @@ class _LoginPageState extends State<LoginPage> {
           listener: (context, state) {
             // Handle state changes
             if (state is LoginLoading) {
-              // Show loading indicator when LoginLoading state is emitted
-              setState(() {
-                _isLoading = true;
-              });
-            } else {
-              // Hide loading indicator for other states
-              setState(() {
-                _isLoading = false;
-              });
+              setState(() => _isLoading = true);
             }
 
             if (state is LoginSuccess) {
@@ -65,34 +57,26 @@ class _LoginPageState extends State<LoginPage> {
               );
             } else if (state is LoginFailure) {
               // Show an error message when login fails
+              setState(() => _isLoading = false);
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(content: Text(state.error)),
               );
             }
           },
           builder: (context, state) {
-            // Build the UI based on the current state
-            return Stack(
-              children: [
-                // LoginForm widget handles the login form UI
-                LoginForm(
-                  emailController: _emailController,
-                  passwordController: _passwordController,
-                  onLogin: (email, password) {
-                    // Dispatch LoginSubmitted event to LoginBloc
-                    context.read<LoginBloc>().add(
-                      LoginSubmitted(username: email, password: password),
-                    );
-                  },
-                ),
-                if (_isLoading)
-                  // Show a loading spinner when _isLoading is true
-                  Container(
-                    color: null,
-                    child: const Center(child: CircularProgressIndicator()),
-                  ),
-              ],
-            );
+            // Conditionally show loading spinner or login form
+            return _isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : LoginForm(
+                    emailController: _emailController,
+                    passwordController: _passwordController,
+                    onLogin: (email, password) {
+                      // Dispatch LoginSubmitted event to LoginBloc
+                      context.read<LoginBloc>().add(
+                        LoginSubmitted(username: email, password: password),
+                      );
+                    },
+                  );
           },
         ),
       ),
