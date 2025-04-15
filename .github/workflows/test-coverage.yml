@@ -1,0 +1,39 @@
+name: Flutter Tests & Coverage
+
+# Allow runners to get read only access to this repository files(set explicitly now because github requires it)
+permissions:
+  contents: read
+
+on:
+  pull_request:
+    branches: 
+      - main
+      - develop
+
+jobs:
+  test-and-coverage:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image
+        run: |
+          docker build -t flutter-tests .
+
+      - name: Run Docker container with tests
+        run: |
+          docker run --rm -v "$GITHUB_WORKSPACE":/app flutter-tests
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          files: coverage/lcov.info
+          token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: true
