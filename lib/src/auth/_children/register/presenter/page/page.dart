@@ -17,7 +17,7 @@ class RegisterPage extends StatelessWidget {
         title: const Text(
           'Register',
           style: TextStyle(
-            color: Colors.black, // Asegurate de que se vea bien según tu tema
+            color: Colors.black,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -26,36 +26,59 @@ class RegisterPage extends StatelessWidget {
       backgroundColor: Theme.of(context).colorScheme.surface,
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: BlocConsumer<RegisterBloc, RegisterState>(
-          listener: (context, state) {
-            if (state is RegisterSuccess) {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => const HomePage()),
+        child: MultiBlocListener(
+          listeners: [
+            BlocListener<RegisterBloc, RegisterState>(
+              listener: (context, state) {
+                if (state is RegisterSuccess) {
+                  context.read<LoginBloc>().add(
+                    LoginSubmitted(
+                      username: state.user.email,
+                      password: state.password,
+                    ),
+                  );
+                } else if (state is RegisterFailure) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(state.error)),
+                  );
+                }
+              },
+            ),
+            BlocListener<LoginBloc, LoginState>(
+              listener: (context, state) {
+                if (state is LoginSuccess) {
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (context) => const HomePage()),
+                    (route) => false,
+                  );
+                } else if (state is LoginFailure) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(state.error)),
+                  );
+                }
+              },
+            ),
+          ],
+          child: BlocBuilder<RegisterBloc, RegisterState>(
+            builder: (context, state) {
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  if (state is RegisterLoading)
+                    const Center(child: CircularProgressIndicator())
+                  else
+                    RegisterForm(
+                      onRegister: (name, email, password) {
+                        context.read<RegisterBloc>().add(
+                              RegisterSubmitted(name: name, email: email, password: password),
+                            );
+                      },
+                    ),
+                ],
               );
-            } else if (state is RegisterFailure) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(state.error)),
-              );
-            }
-          },
-          builder: (context, state) {
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                if (state is RegisterLoading)
-                  const Center(child: CircularProgressIndicator())
-                else
-                  RegisterForm(
-                    onRegister: (name, email, password) {
-                      context.read<RegisterBloc>().add(
-                            RegisterSubmitted(name: name, email: email, password: password),
-                          );
-                    },
-                  ),
-              ],
-            );
-          },
+            },
+          ),
         ),
       ),
     );
