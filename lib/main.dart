@@ -29,8 +29,10 @@ class MyApp extends StatelessWidget {
         providers: [
           BlocProvider<LoginBloc>(
             create:
-                (context) =>
-                    LoginBloc(loginRepository: context.read<LoginRepository>()),
+                (context) => LoginBloc(
+                  loginRepository: context.read<LoginRepository>(),
+                  localStorage: LocalStorage(),
+                ),
           ),
         ],
         child: MaterialApp(
