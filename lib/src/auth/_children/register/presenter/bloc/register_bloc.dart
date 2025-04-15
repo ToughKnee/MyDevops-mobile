@@ -10,7 +10,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
   
   RegisterBloc({required this.registerRepository}) : super(RegisterInitial()) {
     on<RegisterSubmitted>(_onRegisterSubmitted);
-    on<RegisterEmailVerificationChecked>(_onRegisterEmailVerificationChecked);
+    //on<RegisterEmailVerificationChecked>(_onRegisterEmailVerificationChecked);
   }
 
   Future<void> _onRegisterSubmitted(
@@ -20,9 +20,9 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
     emit(RegisterLoading());
 
     try {
-      final user = await registerRepository.register(event.username, event.password);
-      // emit(RegisterEmailVerificationSent(email: user.email));
-      emit(RegisterSuccess(user: user));
+      final user = await registerRepository.register(event.name, event.email, event.password);
+      //TODO BACKEND CALL
+      emit(RegisterSuccess(user: user, password: event.password));
     } on AuthException catch (e) {
       final msg = e.message;
       if (msg == 'Email already in use') {
@@ -39,10 +39,10 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
     }
   }
 
-  Future<void> _onRegisterEmailVerificationChecked(
-    RegisterEmailVerificationChecked event,
-    Emitter<RegisterState> emit,
-  ) async {
-    emit(RegisterSuccess(user: event.user));
-  }
+  // Future<void> _onRegisterEmailVerificationChecked(
+  //   RegisterEmailVerificationChecked event,
+  //   Emitter<RegisterState> emit,
+  // ) async {
+  //   emit(RegisterSuccess(user: event.user));
+  // }
 }

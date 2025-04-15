@@ -21,7 +21,7 @@ final class RegisterEmailVerificationSent extends RegisterState {
 }
 
 class RegisterEmailVerificationChecked extends RegisterEvent {
-  final User user;
+  final AuthUserInfo user;
 
   const RegisterEmailVerificationChecked({required this.user});
 
@@ -30,9 +30,10 @@ class RegisterEmailVerificationChecked extends RegisterEvent {
 }
 
 final class RegisterSuccess extends RegisterState {
-  final User user;
+  final AuthUserInfo user;
+  final String password;
 
-  const RegisterSuccess({required this.user});
+  const RegisterSuccess({required this.user, required this.password});
 
   @override
   List<Object> get props => [user];
