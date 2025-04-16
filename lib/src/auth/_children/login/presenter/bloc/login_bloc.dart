@@ -8,11 +8,13 @@ part 'login_state.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
   final LoginRepository loginRepository;
+  final LocalStorage localStorage;
 
   // Constructor
   // The LoginBloc takes a LoginRepository as a dependency
   // and initializes the state to LoginInitial.
-  LoginBloc({required this.loginRepository}) : super(LoginInitial()) {
+  LoginBloc({required this.loginRepository, required this.localStorage})
+    : super(LoginInitial()) {
     on<LoginSubmitted>(_onLoginSubmitted);
   }
 
@@ -26,8 +28,8 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     try {
       final user = await loginRepository.login(event.username, event.password);
       //TODO BACKEND CALL
-      LocalStorage().userId = user.id;
-      LocalStorage().userEmail = user.email;
+      localStorage.userId = user.id;
+      localStorage.userEmail = user.email;
 
       emit(LoginSuccess(user: user));
     } on AuthException catch (e) {

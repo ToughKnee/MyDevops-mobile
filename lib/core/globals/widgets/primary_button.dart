@@ -4,18 +4,20 @@ class PrimaryButton extends StatelessWidget {
   final VoidCallback onPressed;
   final bool isLoading;
   final String text;
+  final bool isEnabled;
 
   const PrimaryButton({
     super.key,
     required this.onPressed,
     required this.isLoading,
     required this.text,
+    required this.isEnabled,
   });
 
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      onPressed: isLoading ? null : onPressed,
+      onPressed: (isLoading || !isEnabled) ? null : onPressed,
       style: ElevatedButton.styleFrom(
         backgroundColor: Theme.of(context).colorScheme.primary,
         padding: const EdgeInsets.all(15),

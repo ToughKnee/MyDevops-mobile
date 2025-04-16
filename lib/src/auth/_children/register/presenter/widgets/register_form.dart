@@ -165,6 +165,7 @@ class RegisterFormState extends State<RegisterForm> {
       },
       isLoading: false,
       text: 'Register',
+      isEnabled: true,
     );
   }
 }
