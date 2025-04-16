@@ -14,7 +14,6 @@ class _RegisterPageState extends State<RegisterPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
-  bool _isLoading = false;
 
   @override
   void dispose() {
@@ -50,9 +49,6 @@ class _RegisterPageState extends State<RegisterPage> {
           listeners: [
             BlocListener<RegisterBloc, RegisterState>(
               listener: (context, state) {
-                if (state is RegisterLoading) {
-                  setState(() => _isLoading = true);
-                }
 
                 if (state is RegisterSuccess) {
                   context.read<LoginBloc>().add(
@@ -62,7 +58,6 @@ class _RegisterPageState extends State<RegisterPage> {
                     ),
                   );
                 } else if (state is RegisterFailure) {
-                  setState(() => _isLoading = false);
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text(state.error)),
                   );
@@ -71,9 +66,6 @@ class _RegisterPageState extends State<RegisterPage> {
             ),
             BlocListener<LoginBloc, LoginState>(
               listener: (context, state) {
-                if (state is LoginLoading) {
-                  setState(() => _isLoading = true);
-                }
                 if (state is LoginSuccess) {
                   Navigator.pushAndRemoveUntil(
                     context,
@@ -81,7 +73,6 @@ class _RegisterPageState extends State<RegisterPage> {
                     (route) => false,
                   );
                 } else if (state is LoginFailure) {
-                  setState(() => _isLoading = false);
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text(state.error)),
                   );
@@ -89,24 +80,30 @@ class _RegisterPageState extends State<RegisterPage> {
               },
             ),
           ],
-          child: _isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    RegisterForm(
-                      nameController: _nameController,
-                      emailController: _emailController,
-                      passwordController: _passwordController,
-                      confirmPasswordController: _confirmPasswordController,
-                      onRegister: (name, email, password) {
-                        context.read<RegisterBloc>().add(
-                              RegisterSubmitted(name: name, email: email, password: password),
-                            );
-                      },
-                    ),
-                  ],
-                ),
+          child: BlocBuilder<RegisterBloc, RegisterState>(
+            builder: (context, state) {
+              if (state is RegisterLoading) {
+                return const Center(child: CircularProgressIndicator());
+              }
+
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  RegisterForm(
+                    nameController: _nameController,
+                    emailController: _emailController,
+                    passwordController: _passwordController,
+                    confirmPasswordController: _confirmPasswordController,
+                    onRegister: (name, email, password) {
+                      context.read<RegisterBloc>().add(
+                        RegisterSubmitted(name: name, email: email, password: password),
+                      );
+                    },
+                  ),
+                ],
+              );
+            },
+          ),
         ),
       ),
     );
