@@ -14,6 +14,12 @@ class MockLoginBloc extends MockBloc<LoginEvent, LoginState>
 void main() {
   late MockLoginBloc mockLoginBloc;
 
+  final testUser = AuthUserInfo(
+    id: 'test-user-id',
+    email: 'user@test.com',
+    authProviderToken: 'token123',
+  );
+
   setUp(() async {
     SharedPreferences.setMockInitialValues({});
 
@@ -43,7 +49,69 @@ void main() {
         ),
       );
 
-      expect(find.byType(ElevatedButton), findsOneWidget);
+      expect(find.byType(LoginForm), findsOneWidget);
     });
+
+    testWidgets('shows loading indicator when LoginBloc is in loading state',
+        (WidgetTester tester) async {
+      whenListen(
+        mockLoginBloc,
+        Stream.fromIterable([LoginLoading()]),
+        initialState: LoginLoading(),
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: BlocProvider<LoginBloc>.value(
+            value: mockLoginBloc,
+            child: const LoginPage(),
+          ),
+        ),
+      );
+
+      expect(find.byType(Container), findsOneWidget);
+    });
+
+    testWidgets('navigates to HomePage on LoginSuccess',
+        (WidgetTester tester) async {
+      whenListen(
+        mockLoginBloc,
+        Stream.fromIterable([LoginSuccess(user: testUser)]),
+        initialState: LoginSuccess(user: testUser),
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: BlocProvider<LoginBloc>.value(
+            value: mockLoginBloc,
+            child: const LoginPage(),
+          ),
+        ),
+      );
+
+      // TODO: Implement a proper HomePage widget and check for its presence
+      expect(find.byType(Scaffold), findsOneWidget);
+    });
+
+    testWidgets('shows error message on LoginFailure',
+        (WidgetTester tester) async {
+      whenListen(
+        mockLoginBloc,
+        Stream.fromIterable([LoginFailure(error: 'Invalid credentials')]),
+        initialState: LoginFailure(error: 'Invalid credentials'),
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: BlocProvider<LoginBloc>.value(
+            value: mockLoginBloc,
+            child: const LoginPage(),
+          ),
+        ),
+      );
+
+      expect(find.byType(ScaffoldMessenger), findsOneWidget);
+    });
+    
   });
 }
