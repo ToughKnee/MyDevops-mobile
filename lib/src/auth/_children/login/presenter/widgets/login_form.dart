@@ -150,7 +150,8 @@ class LoginFormState extends State<LoginForm> {
         }
       },
       isLoading: false,
-      text: 'Login', // ✅ ahora es solo un String
+      text: 'Login',
+      isEnabled: true,
     );
   }
 
