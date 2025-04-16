@@ -11,24 +11,6 @@ final class RegisterInitial extends RegisterState {}
 
 final class RegisterLoading extends RegisterState {}
 
-final class RegisterEmailVerificationSent extends RegisterState {
-  final String email;
-
-  const RegisterEmailVerificationSent({required this.email});
-
-  @override
-  List<Object> get props => [email];
-}
-
-class RegisterEmailVerificationChecked extends RegisterEvent {
-  final AuthUserInfo user;
-
-  const RegisterEmailVerificationChecked({required this.user});
-
-  @override
-  List<Object> get props => [user];
-}
-
 final class RegisterSuccess extends RegisterState {
   final AuthUserInfo user;
   final String password;
