@@ -20,6 +20,21 @@ class _LoginPageState extends State<LoginPage> {
   // Boolean to track whether the login process is loading
   bool _isLoading = false;
 
+  @override
+void initState() {
+  super.initState();
+
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    final initialState = context.read<LoginBloc>().state;
+    if (initialState is LoginLoading) {
+      setState(() {
+        _isLoading = true;
+      });
+    }
+  });
+}
+
+
   // Dispose controllers when the widget is removed from the widget tree
   @override
   void dispose() {
@@ -46,25 +61,21 @@ class _LoginPageState extends State<LoginPage> {
           listener: (context, state) {
             // Handle state changes
             if (state is LoginLoading) {
-              // Show loading indicator when LoginLoading state is emitted
               setState(() {
                 _isLoading = true;
               });
             } else {
-              // Hide loading indicator for other states
               setState(() {
                 _isLoading = false;
               });
             }
 
             if (state is LoginSuccess) {
-              // Navigate to HomePage when login is successful
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(builder: (context) => const HomePage()),
               );
             } else if (state is LoginFailure) {
-              // Show an error message when login fails
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(content: Text(state.error)),
               );
@@ -72,25 +83,25 @@ class _LoginPageState extends State<LoginPage> {
           },
           builder: (context, state) {
             // Build the UI based on the current state
+            if (state is LoginLoading) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (state is LoginSuccess) {
+              return const Center(child: Text('Login Successful'));
+            }
             return Stack(
               children: [
-                // LoginForm widget handles the login form UI
-                LoginForm(
-                  emailController: _emailController,
-                  passwordController: _passwordController,
-                  onLogin: (email, password) {
-                    // Dispatch LoginSubmitted event to LoginBloc
-                    context.read<LoginBloc>().add(
-                      LoginSubmitted(username: email, password: password),
-                    );
-                  },
-                ),
-                if (_isLoading)
-                  // Show a loading spinner when _isLoading is true
-                  Container(
-                    color: null,
-                    child: const Center(child: CircularProgressIndicator()),
+                if (!_isLoading)
+                  LoginForm(
+                    emailController: _emailController,
+                    passwordController: _passwordController,
+                    onLogin: (email, password) {
+                      context.read<LoginBloc>().add(
+                        LoginSubmitted(username: email, password: password),
+                      );
+                    },
                   ),
+                if (_isLoading)
+                  const Center(child: CircularProgressIndicator()),
               ],
             );
           },
@@ -109,7 +120,7 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       // AppBar with the title "Home"
-      appBar: AppBar(title: Text('Home')),
+      appBar: AppBar(title: const Text('Home')),
 
       // Display a welcome message with the user's email
       body: Center(child: Text('Welcome ${LocalStorage().userEmail}')),
