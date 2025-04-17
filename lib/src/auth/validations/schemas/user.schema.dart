@@ -1,6 +1,23 @@
 import 'package:ez_validator/ez_validator.dart';
 
 class UserValidator {
+
+  static String? validateName(String? value) {
+    final validator = EzValidator<String>()
+        .required('This field is required')
+        .minLength(3, 'The name must be at least 3 characters long')
+        .maxLength(25, 'The name must be at most 25 characters long')
+        .validate(value);
+
+    if (validator != null) return validator;
+
+    if (value != null && !RegExp(r'^[a-zA-Z\s]+$').hasMatch(value)) {
+      return 'The name can only contain letters and spaces';
+    }
+
+    return null;
+  }
+
   static String? validateEmail(String? value) {
     final validator = EzValidator<String>()
         .required('This field is required')

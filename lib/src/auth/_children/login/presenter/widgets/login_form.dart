@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mobile/src/auth/_children/login/presenter/widgets/button.dart';
+import 'package:mobile/core/globals/widgets/primary_button.dart';
 import 'package:mobile/src/auth/auth.dart';
 
 class LoginForm extends StatefulWidget {
@@ -37,6 +37,22 @@ class LoginFormState extends State<LoginForm> {
           Container(
             margin: const EdgeInsets.symmetric(horizontal: 25.0),
             child: _buildLoginButton(),
+          ),
+          SizedBox(height: 10),
+          TextButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const RegisterPage()),
+              );
+            },
+            child: const Text(
+              'Register',
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
         ],
       ),
@@ -127,22 +143,16 @@ class LoginFormState extends State<LoginForm> {
 
   // Method to build the login button
   Widget _buildLoginButton() {
-    return LoginButton(
+    return PrimaryButton(
       onPressed: () {
         if (_formKey.currentState!.validate()) {
           widget.onLogin(widget.emailController.text, widget.passwordController.text);
         }
       },
       isLoading: false,
-      text: Text(
-        'Login',
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 18,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
+      text: 'Login',
       isEnabled: true,
     );
   }
+
 }

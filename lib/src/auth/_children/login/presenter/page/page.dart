@@ -21,19 +21,18 @@ class _LoginPageState extends State<LoginPage> {
   bool _isLoading = false;
 
   @override
-void initState() {
-  super.initState();
+  void initState() {
+    super.initState();
 
-  WidgetsBinding.instance.addPostFrameCallback((_) {
-    final initialState = context.read<LoginBloc>().state;
-    if (initialState is LoginLoading) {
-      setState(() {
-        _isLoading = true;
-      });
-    }
-  });
-}
-
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final initialState = context.read<LoginBloc>().state;
+      if (initialState is LoginLoading) {
+        setState(() {
+          _isLoading = true;
+        });
+      }
+    });
+  }
 
   // Dispose controllers when the widget is removed from the widget tree
   @override
@@ -76,9 +75,9 @@ void initState() {
                 MaterialPageRoute(builder: (context) => const HomePage()),
               );
             } else if (state is LoginFailure) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(state.error)),
-              );
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(SnackBar(content: Text(state.error)));
             }
           },
           builder: (context, state) {

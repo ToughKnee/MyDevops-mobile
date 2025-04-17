@@ -1,2 +1,2 @@
 export 'login_form.dart';
-export 'button.dart';
+export '../../../../../../core/globals/widgets/primary_button.dart';
