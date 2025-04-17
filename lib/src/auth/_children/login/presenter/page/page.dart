@@ -114,7 +114,12 @@ class HomePage extends StatelessWidget {
         if (state is LogoutSuccess) {
           context.read<LoginBloc>().add(LoginReset());
           Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (_) => const LoginPage()),
+            MaterialPageRoute(
+              builder: (_) => BlocProvider.value(
+                value: context.read<LoginBloc>(), // pasa el bloc al nuevo árbol
+                child: const LoginPage(),
+              ),
+            ),
             (route) => false,
           );
         } else if (state is LogoutFailure) {
