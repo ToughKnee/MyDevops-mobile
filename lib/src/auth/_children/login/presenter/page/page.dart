@@ -21,19 +21,16 @@ class _LoginPageState extends State<LoginPage> {
   bool _isLoading = false;
 
   @override
-void initState() {
-  super.initState();
+  void initState() {
+    super.initState();
 
-  WidgetsBinding.instance.addPostFrameCallback((_) {
-    final initialState = context.read<LoginBloc>().state;
-    if (initialState is LoginLoading) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final initialState = context.read<LoginBloc>().state;
       setState(() {
-        _isLoading = true;
+        _isLoading = initialState is LoginLoading;
       });
-    }
-  });
-}
-
+    });
+  }
 
   // Dispose controllers when the widget is removed from the widget tree
   @override
@@ -76,9 +73,9 @@ void initState() {
                 MaterialPageRoute(builder: (context) => const HomePage()),
               );
             } else if (state is LoginFailure) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(state.error)),
-              );
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(SnackBar(content: Text(state.error)));
             }
           },
           builder: (context, state) {
@@ -87,23 +84,17 @@ void initState() {
               return const Center(child: CircularProgressIndicator());
             } else if (state is LoginSuccess) {
               return const Center(child: Text('Login Successful'));
+            } else {
+              return LoginForm(
+                emailController: _emailController,
+                passwordController: _passwordController,
+                onLogin: (email, password) {
+                  context.read<LoginBloc>().add(
+                    LoginSubmitted(username: email, password: password),
+                  );
+                },
+              );
             }
-            return Stack(
-              children: [
-                if (!_isLoading)
-                  LoginForm(
-                    emailController: _emailController,
-                    passwordController: _passwordController,
-                    onLogin: (email, password) {
-                      context.read<LoginBloc>().add(
-                        LoginSubmitted(username: email, password: password),
-                      );
-                    },
-                  ),
-                if (_isLoading)
-                  const Center(child: CircularProgressIndicator()),
-              ],
-            );
           },
         ),
       ),
@@ -118,12 +109,35 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      // AppBar with the title "Home"
-      appBar: AppBar(title: const Text('Home')),
-
-      // Display a welcome message with the user's email
-      body: Center(child: Text('Welcome ${LocalStorage().userEmail}')),
+    return BlocListener<LogoutBloc, LogoutState>(
+      listener: (context, state) {
+        if (state is LogoutSuccess) {
+          context.read<LoginBloc>().add(LoginReset());
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (_) => const LoginPage()),
+            (route) => false,
+          );
+        } else if (state is LogoutFailure) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(state.message)));
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Home'),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.logout),
+              onPressed: () {
+                context.read<LogoutBloc>().add(LogoutRequested());
+                context.read<LoginBloc>().add(LoginReset());
+              },
+            ),
+          ],
+        ),
+        body: Center(child: Text('Welcome ${LocalStorage().userEmail}')),
+      ),
     );
   }
 }
