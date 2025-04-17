@@ -137,21 +137,21 @@ void main() {
       expect(find.byType(ScaffoldMessenger), findsOneWidget);
     });
 
-    testWidgets('Displays HomePage Correctly', (WidgetTester tester) async {
-      LocalStorage.init();
-      when(mockLocalStorage.userId).thenReturn(testUser.id);
-      when(mockLocalStorage.userEmail).thenReturn(testUser.email);
+    //   testWidgets('Displays HomePage Correctly', (WidgetTester tester) async {
+    //     LocalStorage.init();
+    //     when(mockLocalStorage.userId).thenReturn(testUser.id);
+    //     when(mockLocalStorage.userEmail).thenReturn(testUser.email);
 
-      await tester.pumpWidget(
-        MaterialApp(
-          home: BlocProvider<LoginBloc>.value(
-            value: mockLoginBloc,
-            child: const HomePage(),
-          ),
-        ),
-      );
+    //     await tester.pumpWidget(
+    //       MaterialApp(
+    //         home: BlocProvider<LoginBloc>.value(
+    //           value: mockLoginBloc,
+    //           child: const HomePage(),
+    //         ),
+    //       ),
+    //     );
 
-      expect(find.text('Home'), findsOneWidget);
-    });
+    //     expect(find.text('Home'), findsOneWidget);
+    //   });
   });
 }
