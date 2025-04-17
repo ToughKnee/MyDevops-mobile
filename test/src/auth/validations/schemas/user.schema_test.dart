@@ -82,4 +82,36 @@ void main() {
       expect(result, null);
     });
   });
+
+  group('UserValidator Schema - Validate name', () {
+    test('should return error when name is empty', () {
+      final result = UserValidator.validateName('');
+      expect(result, 'This field is required');
+    });
+
+    test('should return error when name is null', () {
+      final result = UserValidator.validateName(null);
+      expect(result, 'This field is required');
+    });
+
+    test('should return error when name is too short', () {
+      final result = UserValidator.validateName('Jo');
+      expect(result, 'The name must be at least 3 characters long');
+    });
+
+    test('should return error when name is too long', () {
+      final result = UserValidator.validateName('A' * 26);
+      expect(result, 'The name must be at most 25 characters long');
+    });
+
+    test('should return error when name contains invalid characters', () {
+      final result = UserValidator.validateName('John123');
+      expect(result, 'The name can only contain letters and spaces');
+    });
+
+    test('should return null when name is valid', () {
+      final result = UserValidator.validateName('John Doe');
+      expect(result, null);
+    });
+  });
 }
