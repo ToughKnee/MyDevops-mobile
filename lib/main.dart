@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/core/storage/user_session.storage.dart';
 import 'package:mobile/src/auth/auth.dart';
+import 'package:mobile/src/auth/_children/_children.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'core/theme/theme.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -21,6 +22,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiRepositoryProvider(
       providers: [
+        RepositoryProvider<RegisterRepository>(
+          create: (context) => RegisterRepositoryFirebase(),
+        ),
         RepositoryProvider<LoginRepository>(
           create: (context) => LoginRepositoryFirebase(),
         ),
@@ -30,6 +34,12 @@ class MyApp extends StatelessWidget {
       ],
       child: MultiBlocProvider(
         providers: [
+          BlocProvider<RegisterBloc>(
+            create:
+                (context) => RegisterBloc(
+                  registerRepository: context.read<RegisterRepository>(),
+                ),
+          ),
           BlocProvider<LoginBloc>(
             create:
                 (context) => LoginBloc(

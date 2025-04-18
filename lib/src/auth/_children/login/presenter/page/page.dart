@@ -115,10 +115,13 @@ class HomePage extends StatelessWidget {
           context.read<LoginBloc>().add(LoginReset());
           Navigator.of(context).pushAndRemoveUntil(
             MaterialPageRoute(
-              builder: (_) => BlocProvider.value(
-                value: context.read<LoginBloc>(), // pasa el bloc al nuevo árbol
-                child: const LoginPage(),
-              ),
+              builder:
+                  (_) => BlocProvider.value(
+                    value:
+                        context
+                            .read<LoginBloc>(), // pasa el bloc al nuevo árbol
+                    child: const LoginPage(),
+                  ),
             ),
             (route) => false,
           );
