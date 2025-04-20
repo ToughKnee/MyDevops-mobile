@@ -12,9 +12,13 @@ class MockRegisterBloc extends MockBloc<RegisterEvent, RegisterState>
 class MockLoginBloc extends MockBloc<LoginEvent, LoginState>
     implements LoginBloc {}
 
+class MockLogoutBloc extends MockBloc<LogoutEvent, LogoutState>
+    implements LogoutBloc {}
+
 void main() {
   late MockRegisterBloc mockRegisterBloc;
   late MockLoginBloc mockLoginBloc;
+  late MockLogoutBloc mockLogoutBloc;
 
   final testUser = AuthUserInfo(
     name: 'Test User',
@@ -26,17 +30,20 @@ void main() {
   setUp(() {
     mockRegisterBloc = MockRegisterBloc();
     mockLoginBloc = MockLoginBloc();
+    mockLogoutBloc = MockLogoutBloc();
   });
 
   // after each test, reset the mock
   tearDown(() {
     mockRegisterBloc.close();
     mockLoginBloc.close();
+    mockLogoutBloc.close();
   });
 
   group('RegisterPage', () {
-    testWidgets('renders RegisterForm when RegisterBloc is in initial state',
-        (WidgetTester tester) async {
+    testWidgets('renders RegisterForm when RegisterBloc is in initial state', (
+      WidgetTester tester,
+    ) async {
       whenListen(
         mockRegisterBloc,
         Stream.fromIterable([RegisterInitial()]),
@@ -64,63 +71,73 @@ void main() {
       expect(find.byType(RegisterForm), findsOneWidget);
     });
 
-    testWidgets('shows loading indicator when RegisterBloc is in loading state',
-        (WidgetTester tester) async {
-      whenListen(
-        mockRegisterBloc,
-        Stream.fromIterable([RegisterLoading()]),
-        initialState: RegisterLoading(),
-      );
+    testWidgets(
+      'shows loading indicator when RegisterBloc is in loading state',
+      (WidgetTester tester) async {
+        whenListen(
+          mockRegisterBloc,
+          Stream.fromIterable([RegisterLoading()]),
+          initialState: RegisterLoading(),
+        );
 
-      whenListen(
-        mockLoginBloc,
-        Stream<LoginState>.empty(),
-        initialState: LoginInitial(),
-      );
+        whenListen(
+          mockLoginBloc,
+          Stream<LoginState>.empty(),
+          initialState: LoginInitial(),
+        );
 
-      await tester.pumpWidget(
-        MaterialApp(
-          home: MultiBlocProvider(
-            providers: [
-              BlocProvider<RegisterBloc>.value(value: mockRegisterBloc),
-              BlocProvider<LoginBloc>.value(value: mockLoginBloc),
-            ],
-            child: const RegisterPage(),
+        await tester.pumpWidget(
+          MaterialApp(
+            home: MultiBlocProvider(
+              providers: [
+                BlocProvider<RegisterBloc>.value(value: mockRegisterBloc),
+                BlocProvider<LoginBloc>.value(value: mockLoginBloc),
+              ],
+              child: const RegisterPage(),
+            ),
           ),
-        ),
-      );
+        );
 
-      expect(find.byType(CircularProgressIndicator), findsOneWidget);
-    });
+        expect(find.byType(CircularProgressIndicator), findsOneWidget);
+      },
+    );
 
-    testWidgets('navigates to HomePage on LoginSuccess from RegisterPage',
-    (WidgetTester tester) async {
-
+    testWidgets('navigates to HomePage on LoginSuccess …', (tester) async {
       SharedPreferences.setMockInitialValues({});
       await LocalStorage.init();
       LocalStorage().userEmail = 'user@test.com';
 
+      // stub RegisterBloc
       whenListen(
         mockRegisterBloc,
-        Stream.fromIterable([RegisterSuccess(user: testUser, password: 'pass')]),
+        Stream.fromIterable([
+          RegisterSuccess(user: testUser, password: 'pass'),
+        ]),
         initialState: RegisterInitial(),
       );
- 
+
+      // stub LoginBloc to emit success
       whenListen(
         mockLoginBloc,
         Stream.fromIterable([LoginSuccess(user: testUser)]),
-        initialState: LoginSuccess(user: testUser),
+        initialState: LoginInitial(),
+      );
+
+      // stub LogoutBloc so HomePage’s listener can read it
+      whenListen<LogoutState>(
+        mockLogoutBloc,
+        Stream.fromIterable([LogoutInitial()]),
+        initialState: LogoutInitial(),
       );
 
       await tester.pumpWidget(
-        MaterialApp(
-          home: MultiBlocProvider(
-            providers: [
-              BlocProvider<RegisterBloc>.value(value: mockRegisterBloc),
-              BlocProvider<LoginBloc>.value(value: mockLoginBloc),
-            ],
-            child: const RegisterPage(),
-          ),
+        MultiBlocProvider(
+          providers: [
+            BlocProvider<RegisterBloc>.value(value: mockRegisterBloc),
+            BlocProvider<LoginBloc>.value(value: mockLoginBloc),
+            BlocProvider<LogoutBloc>.value(value: mockLogoutBloc),
+          ],
+          child: MaterialApp(home: const RegisterPage()),
         ),
       );
 
@@ -129,9 +146,9 @@ void main() {
       expect(find.text('Welcome user@test.com'), findsOneWidget);
     });
 
-
-    testWidgets('shows error message on RegisterFailure',
-        (WidgetTester tester) async {
+    testWidgets('shows error message on RegisterFailure', (
+      WidgetTester tester,
+    ) async {
       const errorMessage =
           'This email is already registered. Please log in or reset your password.';
 
@@ -165,7 +182,9 @@ void main() {
     });
   });
 
-  testWidgets('shows error SnackBar on LoginFailure from RegisterPage', (tester) async {
+  testWidgets('shows error SnackBar on LoginFailure from RegisterPage', (
+    tester,
+  ) async {
     const loginError = 'Invalid credentials from backend';
 
     whenListen(
@@ -196,7 +215,4 @@ void main() {
 
     expect(find.text(loginError), findsOneWidget);
   });
-
-
-
 }
