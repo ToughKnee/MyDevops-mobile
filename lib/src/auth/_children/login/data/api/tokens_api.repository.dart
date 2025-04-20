@@ -3,13 +3,16 @@ import 'package:mobile/core/core.dart';
 import 'package:mobile/src/auth/auth.dart';
 import 'package:http/http.dart' as http;
 
-// TODO: Adjust to backend API
 class TokensRepositoryAPI implements TokensRepository {
+  final http.Client client;
+
+  TokensRepositoryAPI({http.Client? client}) : client = client ?? http.Client();
+
   @override
   Future<AuthTokens> getTokens(String authProviderToken) async {
     try {
-      final response = await http.post(
-        Uri.parse('$API_BASE_URL/auth/login'),
+      final response = await client.post(
+        Uri.parse('$API_BASE_URL/user/auth/login'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'authProviderToken': authProviderToken}),
       );
@@ -25,7 +28,10 @@ class TokensRepositoryAPI implements TokensRepository {
         throw AuthException(data['message'] ?? 'Authentication failed');
       }
     } catch (e) {
-      throw AuthException('Failed to get tokens: $e');
+      if (e.toString().contains('Unauthorized')) {
+        throw AuthException('Unauthorized access');
+      }
+      throw AuthException('Unexpected error: $e');
     }
   }
 }
