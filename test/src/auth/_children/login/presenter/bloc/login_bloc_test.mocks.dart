@@ -29,6 +29,11 @@ class _FakeAuthUserInfo_0 extends _i1.SmartFake implements _i2.AuthUserInfo {
     : super(parent, parentInvocation);
 }
 
+class _FakeAuthTokens_1 extends _i1.SmartFake implements _i2.AuthTokens {
+  _FakeAuthTokens_1(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
+}
+
 /// A class which mocks [LoginRepository].
 ///
 /// See the documentation for Mockito's code generation for more information.
@@ -157,4 +162,26 @@ class MockLocalStorage extends _i1.Mock implements _i4.LocalStorage {
             returnValueForMissingStub: _i3.Future<void>.value(),
           )
           as _i3.Future<void>);
+}
+
+/// A class which mocks [TokensRepository].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockTokensRepository extends _i1.Mock implements _i2.TokensRepository {
+  MockTokensRepository() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  _i3.Future<_i2.AuthTokens> getTokens(String? authProviderToken) =>
+      (super.noSuchMethod(
+            Invocation.method(#getTokens, [authProviderToken]),
+            returnValue: _i3.Future<_i2.AuthTokens>.value(
+              _FakeAuthTokens_1(
+                this,
+                Invocation.method(#getTokens, [authProviderToken]),
+              ),
+            ),
+          )
+          as _i3.Future<_i2.AuthTokens>);
 }

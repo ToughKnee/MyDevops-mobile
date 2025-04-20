@@ -6,12 +6,13 @@ import 'package:mockito/annotations.dart';
 import 'package:mobile/src/auth/auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-@GenerateMocks([LoginRepository, LocalStorage])
+@GenerateMocks([LoginRepository, LocalStorage, TokensRepository])
 import 'login_bloc_test.mocks.dart';
 
 void main() {
   late MockLoginRepository mockLoginRepository;
   late MockLocalStorage mockLocalStorage;
+  late MockTokensRepository mockTokensRepository;
   late LoginBloc loginBloc;
 
   final testUser = AuthUserInfo(
@@ -25,10 +26,12 @@ void main() {
 
     mockLoginRepository = MockLoginRepository();
     mockLocalStorage = MockLocalStorage();
+    mockTokensRepository = MockTokensRepository();
 
     loginBloc = LoginBloc(
       loginRepository: mockLoginRepository,
       localStorage: mockLocalStorage,
+      tokensRepository: mockTokensRepository,
     );
   });
 
@@ -54,21 +57,29 @@ void main() {
 
     blocTest<LoginBloc, LoginState>(
       'should emit [LoginLoading, LoginSuccess] when a login is successful',
-
       build: () {
         // Mock the login repository response as successful
-        // returning a test user
         when(
           mockLoginRepository.login('user@test.com', 'password'),
         ).thenAnswer((_) async => testUser);
 
-        // thenReturn = '' because is a setter and we don't care about the value
+        // Mock tokens repository response
+        when(
+          mockTokensRepository.getTokens(testUser.authProviderToken),
+        ).thenAnswer(
+          (_) async => AuthTokens(
+            accessToken: 'accessToken',
+            refreshToken: 'refreshToken',
+          ),
+        );
+
+        // Mock localStorage setters (they return void, so we use '')
         when(mockLocalStorage.userId = testUser.id).thenReturn('');
         when(mockLocalStorage.userEmail = testUser.email).thenReturn('');
+        when(mockLocalStorage.accessToken = 'accessToken').thenReturn('');
 
         return loginBloc;
       },
-
       act:
           (bloc) => bloc.add(
             const LoginSubmitted(
@@ -76,20 +87,23 @@ void main() {
               password: 'password',
             ),
           ),
-
       expect:
           () => [
             isA<LoginLoading>(),
             isA<LoginSuccess>().having((state) => state.user, 'user', testUser),
           ],
-
       verify: (_) {
         verify(
           mockLoginRepository.login('user@test.com', 'password'),
         ).called(1);
 
+        verify(
+          mockTokensRepository.getTokens(testUser.authProviderToken),
+        ).called(1);
+
         verify(mockLocalStorage.userId = testUser.id).called(1);
         verify(mockLocalStorage.userEmail = testUser.email).called(1);
+        verify(mockLocalStorage.accessToken = 'accessToken').called(1);
       },
     );
 
