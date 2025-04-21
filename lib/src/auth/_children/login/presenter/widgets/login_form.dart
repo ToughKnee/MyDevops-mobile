@@ -49,13 +49,24 @@ class LoginFormState extends State<LoginForm> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          Text(
-            'Forgot Password?',
-            style: TextStyle(
-              color: Theme.of(context).colorScheme.primary,
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-            ),
+          TextButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const ForgotPasswordPage(),
+                ),
+              );
+            },
+            child:
+              Text(
+                'Forgot Password?',
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.primary,
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
           ),
         ],
       ),
