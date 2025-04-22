@@ -46,8 +46,8 @@ void main() {
     await tester.pumpAndSettle();
 
     // Verifica mensaje específico
-    expect(find.text('Correo inválido'), findsOneWidget);
-    expect(find.text('Por favor ingrese un correo válido del dominio @ucr.ac.cr'), findsOneWidget);
+    expect(find.text('Invalid Email'), findsOneWidget);
+    expect(find.text('Please enter a valid email address from the @ucr.ac.cr domain'), findsOneWidget);
     expect((tester.widget(textField) as TextFormField).controller!.text, '');
   });
 
@@ -62,13 +62,13 @@ void main() {
     verify(mockBloc.add(ForgotPasswordSubmitted('user@ucr.ac.cr'))).called(1);
   });
 
-  testWidgets('ForgotPasswordSuccess muestra diálogo y se cierra tras 5 segundos', (tester) async {
+  testWidgets('ForgotPasswordSuccess muestra diálogo y se cierra tras 3 segundos', (tester) async {
     when(mockBloc.stream).thenAnswer((_) => Stream.value(ForgotPasswordSuccess()));
 
     await tester.pumpWidget(createWidgetUnderTest());
     await tester.pump(); // recibe el estado del stream
 
-    expect(find.text('Correo de recuperación enviado correctamente.'), findsOneWidget);
+    expect(find.text('Recovery mail sent successfully.'), findsOneWidget);
 
     await tester.pump(const Duration(seconds: 5));
     await tester.pumpAndSettle();
@@ -116,9 +116,9 @@ void main() {
     await tester.pumpAndSettle();
     await tester.pump();
 
-    expect(find.text('Correo de recuperación enviado correctamente.'), findsOneWidget);
+    expect(find.text('Recovery mail sent successfully.'), findsOneWidget);
 
-    await tester.tap(find.text('Aceptar'));
+    await tester.tap(find.text('Accept'));
     await tester.pumpAndSettle();
 
     // Verificamos que regresó a la pantalla anterior

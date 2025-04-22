@@ -24,11 +24,11 @@ class _ForgotPasswordFormState extends State<ForgotPasswordForm> {
     final regex = RegExp(r'^[\w-\.]+@ucr\.ac\.cr$');
 
     if (email.isEmpty) {
-      return 'Este campo es obligatorio';
+      return 'This field is required';
     }
 
     if (!regex.hasMatch(email)) {
-      return 'Correo inválido. Debe ser del dominio @ucr.ac.cr';
+      return 'Invalid email. Must be @ucr.ac.cr domain.';
     }
 
     return null;
@@ -40,7 +40,7 @@ class _ForgotPasswordFormState extends State<ForgotPasswordForm> {
       barrierDismissible: false,
       builder: (dialogContext) {
         // Cierra automático en 5 segundos
-        Future.delayed(const Duration(seconds: 5), () {
+        Future.delayed(const Duration(seconds: 3), () {
           if (Navigator.of(dialogContext).canPop()) {
             Navigator.of(dialogContext).pop();
             if (success) {
@@ -54,7 +54,7 @@ class _ForgotPasswordFormState extends State<ForgotPasswordForm> {
           content: Text(message),
           actions: [
             TextButton(
-              child: const Text('Aceptar'),
+              child: const Text('Accept'),
               onPressed: () {
                 Navigator.of(dialogContext).pop();
                 if (success) {
@@ -77,8 +77,8 @@ class _ForgotPasswordFormState extends State<ForgotPasswordForm> {
     } else {
       _emailController.clear(); // Limpiar el campo si el correo es inválido
       _showDialog(
-        'Correo inválido',
-        'Por favor ingrese un correo válido del dominio @ucr.ac.cr',
+        'Invalid Email',
+        'Please enter a valid email address from the @ucr.ac.cr domain.',
       );
     }
   }
@@ -89,8 +89,8 @@ class _ForgotPasswordFormState extends State<ForgotPasswordForm> {
       listener: (context, state) {
         if (state is ForgotPasswordSuccess) {
           _showDialog(
-            'Correo enviado',
-            'Correo de recuperación enviado correctamente.',
+            'Mail sent',
+            'Recovery mail sent successfully.',
             success: true, // activamos el regreso automático
           );
         } else if (state is ForgotPasswordFailure) {
@@ -107,14 +107,14 @@ class _ForgotPasswordFormState extends State<ForgotPasswordForm> {
               TextFormField(
                 controller: _emailController,
                 decoration: const InputDecoration(
-                  labelText: 'Correo electrónico',
+                  labelText: 'Email',
                 ),
                 validator: _validateEmail,
               ),
               const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: _onSubmit,
-                child: const Text('Enviar'),
+                child: const Text('Send'),
               ),
             ],
           ),

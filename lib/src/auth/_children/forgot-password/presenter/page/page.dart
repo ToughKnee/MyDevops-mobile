@@ -8,7 +8,7 @@ class ForgotPasswordPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Recuperar contraseña')),
+      appBar: AppBar(title: const Text('Password recovery')),
       body: BlocProvider(
         create: (_) => ForgotPasswordBloc(
           ForgotPasswordRepositoryImpl(ForgotPasswordApi()),
