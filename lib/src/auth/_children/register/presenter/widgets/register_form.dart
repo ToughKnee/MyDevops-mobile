@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/src/auth/auth.dart';
+import 'package:mobile/core/globals/globals.dart';
 
 class RegisterForm extends StatefulWidget {
   final TextEditingController nameController;
@@ -58,10 +59,14 @@ class RegisterFormState extends State<RegisterForm> {
         decoration: InputDecoration(
           labelText: 'Name',
           enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Theme.of(context).colorScheme.outline),
+            borderSide: BorderSide(
+              color: Theme.of(context).colorScheme.outline,
+            ),
           ),
           focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Theme.of(context).colorScheme.primary),
+            borderSide: BorderSide(
+              color: Theme.of(context).colorScheme.primary,
+            ),
           ),
           fillColor: Colors.white,
           filled: true,
@@ -80,10 +85,14 @@ class RegisterFormState extends State<RegisterForm> {
         decoration: InputDecoration(
           labelText: 'Email',
           enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Theme.of(context).colorScheme.outline),
+            borderSide: BorderSide(
+              color: Theme.of(context).colorScheme.outline,
+            ),
           ),
           focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Theme.of(context).colorScheme.primary),
+            borderSide: BorderSide(
+              color: Theme.of(context).colorScheme.primary,
+            ),
           ),
           fillColor: Colors.white,
           filled: true,
@@ -102,10 +111,14 @@ class RegisterFormState extends State<RegisterForm> {
         decoration: InputDecoration(
           labelText: 'Password',
           enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Theme.of(context).colorScheme.outline),
+            borderSide: BorderSide(
+              color: Theme.of(context).colorScheme.outline,
+            ),
           ),
           focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Theme.of(context).colorScheme.primary),
+            borderSide: BorderSide(
+              color: Theme.of(context).colorScheme.primary,
+            ),
           ),
           fillColor: Colors.white,
           filled: true,
@@ -134,10 +147,14 @@ class RegisterFormState extends State<RegisterForm> {
         decoration: InputDecoration(
           labelText: 'Confirm Password',
           enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Theme.of(context).colorScheme.outline),
+            borderSide: BorderSide(
+              color: Theme.of(context).colorScheme.outline,
+            ),
           ),
           focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Theme.of(context).colorScheme.primary),
+            borderSide: BorderSide(
+              color: Theme.of(context).colorScheme.primary,
+            ),
           ),
           fillColor: Colors.white,
           filled: true,
