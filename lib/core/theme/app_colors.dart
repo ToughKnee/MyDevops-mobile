@@ -11,7 +11,7 @@ class AppColors {
 
   static const Color textSecondary = Color(0xFF7A8CA5);
 
-  static const Color error = Color(0xFFFF4A65);
+  static const Color error = Color.fromARGB(255, 219, 56, 80);
 
   static const Color accent = Color(0xFF9D7FEA);
 

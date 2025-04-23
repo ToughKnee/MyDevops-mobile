@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mobile/core/core.dart';
 import 'package:mobile/src/auth/auth.dart';
 
-// LoginPage is a StatefulWidget that represents the login screen of the app.
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
@@ -11,18 +10,29 @@ class LoginPage extends StatefulWidget {
   State<LoginPage> createState() => _LoginPageState();
 }
 
-// State class for LoginPage
-class _LoginPageState extends State<LoginPage> {
-  // Controllers for email and password input fields
+class _LoginPageState extends State<LoginPage>
+    with SingleTickerProviderStateMixin {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-
-  // Boolean to track whether the login process is loading
   bool _isLoading = false;
+  late AnimationController _animationController;
+  Animation<double>? _fadeAnimation;
 
   @override
   void initState() {
     super.initState();
+
+    // Setup animations
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 800),
+      vsync: this,
+    );
+
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeIn),
+    );
+
+    _animationController.forward();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final initialState = context.read<LoginBloc>().state;
@@ -34,31 +44,25 @@ class _LoginPageState extends State<LoginPage> {
     });
   }
 
-  // Dispose controllers when the widget is removed from the widget tree
   @override
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
+    _animationController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    if (_fadeAnimation == null) {
+      return const SizedBox(); // placeholder temporal
+    }
+
     return Scaffold(
-      // AppBar with the title "Login"
-      appBar: AppBar(title: const Text('Login')),
-
-      // Set the background color using the app's theme
       backgroundColor: Theme.of(context).colorScheme.surface,
-
-      // Padding around the body content
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-
-        // BlocConsumer listens to LoginBloc and reacts to state changes
+      body: SafeArea(
         child: BlocConsumer<LoginBloc, LoginState>(
           listener: (context, state) {
-            // Handle state changes
             if (state is LoginLoading) {
               setState(() {
                 _isLoading = true;
@@ -75,33 +79,55 @@ class _LoginPageState extends State<LoginPage> {
                 MaterialPageRoute(builder: (context) => const HomePage()),
               );
             } else if (state is LoginFailure) {
-              ScaffoldMessenger.of(
-                context,
-              ).showSnackBar(SnackBar(content: Text(state.error)));
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Row(
+                    children: [
+                      Icon(Icons.error_outline, color: Colors.white),
+                      SizedBox(width: 8),
+                      Expanded(child: Text(state.error)),
+                    ],
+                  ),
+                  backgroundColor: Theme.of(context).colorScheme.error,
+                  behavior: SnackBarBehavior.floating,
+                  margin: EdgeInsets.all(16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+              );
             }
           },
           builder: (context, state) {
-            // Build the UI based on the current state
-            if (state is LoginLoading) {
-              return const Center(child: CircularProgressIndicator());
-            } else if (state is LoginSuccess) {
-              return const Center(child: Text('Login Successful'));
-            }
-            return Stack(
-              children: [
-                if (!_isLoading)
-                  LoginForm(
-                    emailController: _emailController,
-                    passwordController: _passwordController,
-                    onLogin: (email, password) {
-                      context.read<LoginBloc>().add(
-                        LoginSubmitted(username: email, password: password),
-                      );
-                    },
-                  ),
-                if (_isLoading)
-                  const Center(child: CircularProgressIndicator()),
-              ],
+            return FadeTransition(
+              opacity: _fadeAnimation!,
+              child: Stack(
+                children: [
+                  if (!_isLoading)
+                    LoginForm(
+                      emailController: _emailController,
+                      passwordController: _passwordController,
+                      onLogin: (email, password) {
+                        context.read<LoginBloc>().add(
+                          LoginSubmitted(username: email, password: password),
+                        );
+                      },
+                    ),
+                  if (_isLoading)
+                    Container(
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withAlpha((0.7 * 255).round()),
+                      child: Center(
+                        child: CircularProgressIndicator(
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            Theme.of(context).colorScheme.primary,
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
             );
           },
         ),
