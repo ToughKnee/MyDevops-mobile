@@ -36,11 +36,9 @@ class _LoginPageState extends State<LoginPage>
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final initialState = context.read<LoginBloc>().state;
-      if (initialState is LoginLoading) {
-        setState(() {
-          _isLoading = true;
-        });
-      }
+      setState(() {
+        _isLoading = initialState is LoginLoading;
+      });
     });
   }
 
@@ -143,12 +141,41 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      // AppBar with the title "Home"
-      appBar: AppBar(title: const Text('Home')),
-
-      // Display a welcome message with the user's email
-      body: Center(child: Text('Welcome ${LocalStorage().userEmail}')),
+    return BlocListener<LogoutBloc, LogoutState>(
+      listener: (context, state) {
+        if (state is LogoutSuccess) {
+          context.read<LoginBloc>().add(LoginReset());
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(
+              builder:
+                  (_) => BlocProvider.value(
+                    value: context.read<LoginBloc>(),
+                    child: const LoginPage(),
+                  ),
+            ),
+            (route) => false,
+          );
+        } else if (state is LogoutFailure) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(state.message)));
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Home'),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.logout),
+              onPressed: () {
+                context.read<LogoutBloc>().add(LogoutRequested());
+                context.read<LoginBloc>().add(LoginReset());
+              },
+            ),
+          ],
+        ),
+        body: Center(child: Text('Welcome ${LocalStorage().userEmail}')),
+      ),
     );
   }
 }

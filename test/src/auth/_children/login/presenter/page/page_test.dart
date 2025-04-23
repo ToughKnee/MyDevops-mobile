@@ -9,11 +9,25 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../bloc/login_bloc_test.mocks.dart';
 
 class MockLoginBloc extends MockBloc<LoginEvent, LoginState>
-    implements LoginBloc {}
+    implements LoginBloc {
+  @override
+  void add(LoginEvent event) {
+    super.noSuchMethod(Invocation.method(#add, [event]));
+  }
+}
+
+class MockLogoutBloc extends MockBloc<LogoutEvent, LogoutState>
+    implements LogoutBloc {
+  @override
+  void add(LogoutEvent event) {
+    super.noSuchMethod(Invocation.method(#add, [event]));
+  }
+}
 
 void main() {
   SharedPreferences.setMockInitialValues({});
   late MockLoginBloc mockLoginBloc;
+  late MockLogoutBloc mockLogoutBloc;
   late MockLocalStorage mockLocalStorage;
   final testUser = AuthUserInfo(
     id: 'test-user-id',
@@ -24,11 +38,13 @@ void main() {
   setUp(() async {
     mockLocalStorage = MockLocalStorage();
     mockLoginBloc = MockLoginBloc();
+    mockLogoutBloc = MockLogoutBloc();
   });
 
   // after each test, reset the mock
   tearDown(() {
     mockLoginBloc.close();
+    mockLogoutBloc.close();
   });
 
   group('LoginPage', () {
@@ -140,17 +156,90 @@ void main() {
       LocalStorage.init();
       when(mockLocalStorage.userId).thenReturn(testUser.id);
       when(mockLocalStorage.userEmail).thenReturn(testUser.email);
-
+      whenListen(
+        mockLogoutBloc,
+        Stream.fromIterable([LogoutInitial()]),
+        initialState: LogoutInitial(),
+      );
       await tester.pumpWidget(
         MaterialApp(
-          home: BlocProvider<LoginBloc>.value(
-            value: mockLoginBloc,
+          home: BlocProvider<LogoutBloc>.value(
+            value: mockLogoutBloc,
             child: const HomePage(),
           ),
         ),
       );
 
-      expect(find.text('Home'), findsOneWidget);
+      expect(find.byType(HomePage), findsOneWidget);
+    });
+
+    testWidgets('redirects to LoginPage on LogoutSuccess', (
+      WidgetTester tester,
+    ) async {
+      LocalStorage.init();
+      when(mockLocalStorage.userId).thenReturn(testUser.id);
+      when(mockLocalStorage.userEmail).thenReturn(testUser.email);
+
+      //  when(mockLoginBloc.state).thenReturn(LoginInitial());
+      whenListen(
+        mockLogoutBloc,
+        Stream.fromIterable([LogoutInitial(), LogoutSuccess()]),
+        initialState: LogoutInitial(),
+      );
+      whenListen(
+        mockLoginBloc,
+        Stream.fromIterable([LoginInitial()]),
+        initialState: LoginInitial(),
+      );
+      await tester.pumpWidget(
+        MaterialApp(
+          home: MultiBlocProvider(
+            providers: [
+              BlocProvider<LoginBloc>.value(value: mockLoginBloc),
+              BlocProvider<LogoutBloc>.value(value: mockLogoutBloc),
+            ],
+            child: const HomePage(),
+          ),
+        ),
+      );
+
+      expect(find.byType(HomePage), findsOneWidget);
+      expect(find.byIcon(Icons.logout), findsOneWidget);
+
+      await tester.tap(find.byIcon(Icons.logout));
+      await tester.pumpAndSettle();
+      expect(find.byType(LoginForm), findsOne);
+    });
+
+    testWidgets('shows error on LogoutFailure', (WidgetTester tester) async {
+      LocalStorage.init();
+      when(mockLocalStorage.userId).thenReturn(testUser.id);
+      when(mockLocalStorage.userEmail).thenReturn(testUser.email);
+
+      whenListen(
+        mockLogoutBloc,
+        Stream.fromIterable([LogoutFailure('Logout failed')]),
+        initialState: LogoutFailure('Logout failed'),
+      );
+      whenListen(
+        mockLoginBloc,
+        Stream.fromIterable([LoginInitial()]),
+        initialState: LoginInitial(),
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: MultiBlocProvider(
+            providers: [
+              BlocProvider<LoginBloc>.value(value: mockLoginBloc),
+              BlocProvider<LogoutBloc>.value(value: mockLogoutBloc),
+            ],
+            child: const HomePage(),
+          ),
+        ),
+      );
+
+      expect(find.byType(ScaffoldMessenger), findsOneWidget);
     });
   });
 }

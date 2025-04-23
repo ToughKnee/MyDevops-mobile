@@ -20,6 +20,11 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     required this.tokensRepository,
   }) : super(LoginInitial()) {
     on<LoginSubmitted>(_onLoginSubmitted);
+    on<LoginReset>(_onLoginReset);
+  }
+
+  void _onLoginReset(LoginReset event, Emitter<LoginState> emit) {
+    emit(LoginInitial());
   }
 
   // Event handler for LoginSubmitted event

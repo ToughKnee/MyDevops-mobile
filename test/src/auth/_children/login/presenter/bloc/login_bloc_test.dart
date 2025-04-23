@@ -178,5 +178,14 @@ void main() {
         );
       },
     );
+
+    blocTest<LoginBloc, LoginState>(
+      'should emit [LoginInitial] when LoginReset is added',
+      build: () => loginBloc,
+
+      act: (bloc) => bloc.add(LoginReset()),
+
+      expect: () => [isA<LoginInitial>()],
+    );
   });
 }
