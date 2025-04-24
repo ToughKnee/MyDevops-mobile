@@ -14,14 +14,14 @@ class TokensRepositoryAPI implements TokensRepository {
       final response = await client.post(
         Uri.parse('$API_BASE_URL/user/auth/login'),
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'authProviderToken': authProviderToken}),
+        body: jsonEncode({'auth_token': authProviderToken}),
       );
 
       final data = jsonDecode(response.body);
 
       if (response.statusCode == 200) {
         return AuthTokens(
-          accessToken: data['accessToken'],
+          accessToken: data['access_token'],
           refreshToken: data['refreshToken'] ?? '',
         );
       } else {
