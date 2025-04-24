@@ -22,11 +22,11 @@ void main() {
     final authProviderToken = 'test-auth-provider-token';
     final endpoint = Uri.parse('$API_BASE_URL/user/auth/login');
     final requestHeaders = {'Content-Type': 'application/json'};
-    final requestBody = jsonEncode({'authProviderToken': authProviderToken});
+    final requestBody = jsonEncode({'auth_token': authProviderToken});
 
     test('should return AuthTokens when API call is successful', () async {
       final responseData = {
-        'accessToken': 'test-access-token',
+        'access_token': 'test-access-token',
         'refreshToken': 'test-refresh-token',
       };
 
@@ -44,7 +44,7 @@ void main() {
     });
 
     test('should handle null refreshToken in successful response', () async {
-      final responseData = {'accessToken': 'test-access-token'};
+      final responseData = {'access_token': 'test-access-token'};
 
       when(
         mockClient.post(endpoint, headers: requestHeaders, body: requestBody),
