@@ -69,45 +69,46 @@ void main() {
       expect(find.byType(LoginForm), findsOneWidget);
     });
 
-    // testWidgets('shows loading indicator when LoginBloc is in loading state',
-    //     (WidgetTester tester) async {
-    //   whenListen(
-    //     mockLoginBloc,
-    //     Stream.fromIterable([LoginLoading()]),
-    //     initialState: LoginLoading(),
-    //   );
+    testWidgets('shows loading indicator when LoginBloc is in loading state',
+        (WidgetTester tester) async {
+      whenListen(
+        mockLoginBloc,
+        Stream.fromIterable([LoginLoading()]),
+        initialState: LoginLoading(),
+      );
 
-    //   await tester.pumpWidget(
-    //     MaterialApp(
-    //       home: BlocProvider<LoginBloc>.value(
-    //         value: mockLoginBloc,
-    //         child: const LoginPage(),
-    //       ),
-    //     ),
-    //   );
+      await tester.pumpWidget(
+        MaterialApp(
+          home: BlocProvider<LoginBloc>.value(
+            value: mockLoginBloc,
+            child: const LoginPage(),
+          ),
+        ),
+      );
 
-    //   expect(find.byType(Center), findsOneWidget);
-    // });
-    // testWidgets('doesnt show login Form when LoginBloc is loading',
-    // (WidgetTester tester) async {
-    //   whenListen(
-    //     mockLoginBloc,
-    //     Stream.fromIterable([LoginLoading()]),
-    //     initialState: LoginLoading(),
-    //   );
+      expect(find.byType(CircularProgressIndicator), findsOneWidget);
+    });
+    
+    testWidgets('doesnt show login Form when LoginBloc is loading',
+    (WidgetTester tester) async {
+      whenListen(
+        mockLoginBloc,
+        Stream.fromIterable([LoginLoading()]),
+        initialState: LoginLoading(),
+      );
 
-    //   await tester.pumpWidget(
-    //     MaterialApp(
-    //       home: BlocProvider<LoginBloc>.value(
-    //         value: mockLoginBloc,
-    //         child: const LoginPage(),
-    //       ),
-    //     ),
-    //   );
+      await tester.pumpWidget(
+        MaterialApp(
+          home: BlocProvider<LoginBloc>.value(
+            value: mockLoginBloc,
+            child: const LoginPage(),
+          ),
+        ),
+      );
 
-    //   expect(find.byType(LoginForm), findsNothing);
-    // }
-    // );
+      expect(find.byType(LoginForm), findsNothing);
+    }
+    );
 
     testWidgets('navigates to HomePage on LoginSuccess', (
       WidgetTester tester,
