@@ -51,7 +51,7 @@ class LoginFormState extends State<LoginForm> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Sign in to continue',
+                  'Log in to continue',
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                     color: Theme.of(context).colorScheme.outline,
@@ -240,7 +240,7 @@ class LoginFormState extends State<LoginForm> {
         }
       },
       isLoading: false,
-      text: 'Sign In',
+      text: 'Log In',
       isEnabled: true,
     );
   }
