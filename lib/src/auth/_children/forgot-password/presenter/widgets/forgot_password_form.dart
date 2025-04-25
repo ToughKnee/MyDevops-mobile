@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mobile/core/globals/globals.dart';
 import '../../forgot_password.dart';
 
 class ForgotPasswordForm extends StatefulWidget {
@@ -39,12 +40,11 @@ class _ForgotPasswordFormState extends State<ForgotPasswordForm> {
       context: context,
       barrierDismissible: false,
       builder: (dialogContext) {
-        // Cierra automático en 5 segundos
         Future.delayed(const Duration(seconds: 3), () {
           if (Navigator.of(dialogContext).canPop()) {
             Navigator.of(dialogContext).pop();
             if (success) {
-              Navigator.of(context).pop(); // Regresa al login
+              Navigator.of(context).pop();
             }
           }
         });
@@ -58,7 +58,7 @@ class _ForgotPasswordFormState extends State<ForgotPasswordForm> {
               onPressed: () {
                 Navigator.of(dialogContext).pop();
                 if (success) {
-                  Navigator.of(context).pop(); // Regresa al login
+                  Navigator.of(context).pop();
                 }
               },
             ),
@@ -75,12 +75,75 @@ class _ForgotPasswordFormState extends State<ForgotPasswordForm> {
       final email = _emailController.text.trim();
       context.read<ForgotPasswordBloc>().add(ForgotPasswordSubmitted(email));
     } else {
-      _emailController.clear(); // Limpiar el campo si el correo es inválido
+      _emailController.clear();
       _showDialog(
         'Invalid Email',
         'Please enter a valid email address from the @ucr.ac.cr domain.',
       );
     }
+  }
+
+  Widget _buildEmailField() {
+    return TextFormField(
+      controller: _emailController,
+      keyboardType: TextInputType.emailAddress,
+      cursorColor: Theme.of(context).colorScheme.primary,
+      decoration: InputDecoration(
+        labelText: 'Email',
+        hintText: 'email@ucr.ac.cr',
+        hintStyle: TextStyle(
+          color: Theme.of(context).colorScheme.onSurface.withAlpha((0.3 * 255).round()),
+        ),
+        prefixIcon: Icon(
+          Icons.email_outlined,
+          color: Theme.of(context).colorScheme.outline,
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(
+            color: Theme.of(context).colorScheme.onSurface.withAlpha((0.3 * 255).round()),
+            width: 1.0,
+          ),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(
+            color: Theme.of(context).colorScheme.primary,
+            width: 2.0,
+          ),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(
+            color: Theme.of(context).colorScheme.error,
+            width: 1.0,
+          ),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(
+            color: Theme.of(context).colorScheme.error,
+            width: 2.0,
+          ),
+        ),
+        fillColor: Theme.of(context).colorScheme.surface,
+        filled: true,
+        labelStyle: TextStyle(color: Theme.of(context).colorScheme.outline),
+        floatingLabelStyle: TextStyle(
+          color: Theme.of(context).colorScheme.primary,
+        ),
+      ),
+      validator: _validateEmail,
+    );
+  }
+
+  Widget _buildSubmitButton() {
+    return PrimaryButton(
+      onPressed: _onSubmit,
+      text: 'Send',
+      isEnabled: true,
+      isLoading: false,
+    );
   }
 
   @override
@@ -91,7 +154,7 @@ class _ForgotPasswordFormState extends State<ForgotPasswordForm> {
           _showDialog(
             'Mail sent',
             'Recovery mail sent successfully.',
-            success: true, // activamos el regreso automático
+            success: true,
           );
         } else if (state is ForgotPasswordFailure) {
           _showDialog('Error', state.message);
@@ -104,18 +167,9 @@ class _ForgotPasswordFormState extends State<ForgotPasswordForm> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              TextFormField(
-                controller: _emailController,
-                decoration: const InputDecoration(
-                  labelText: 'Email',
-                ),
-                validator: _validateEmail,
-              ),
+              _buildEmailField(),
               const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: _onSubmit,
-                child: const Text('Send'),
-              ),
+              _buildSubmitButton(),
             ],
           ),
         ),
