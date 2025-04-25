@@ -52,8 +52,8 @@ dev_dependencies:
 
   test: ^1.25.15
   bloc_test: ^10.0.0
-  mockito: ^5.4.5
-  build_runner: ^2.4.15
+  mockito: ^5.3.2
+  build_runner: ^2.4.6
   #bloc_test: ^10.0.0
 
   # The "flutter_lints" package below contains a set of recommended lints to
@@ -65,6 +65,8 @@ dev_dependencies:
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
+
+
 
 # The following section is specific to Flutter packages.
 flutter:
