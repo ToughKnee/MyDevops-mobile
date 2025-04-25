@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mobile/src/auth/_children/login/presenter/widgets/button.dart';
+import 'package:mobile/core/globals/globals.dart';
 import 'package:mobile/src/auth/auth.dart';
 
 class LoginForm extends StatefulWidget {
@@ -26,133 +26,259 @@ class LoginFormState extends State<LoginForm> {
   Widget build(BuildContext context) {
     return Form(
       key: _formKey,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          _buildEmailField(),
-          SizedBox(height: 20),
-          _buildPasswordField(),
-          _forgotPasswordField(),
-          SizedBox(height: 20),
-          Container(
-            margin: const EdgeInsets.symmetric(horizontal: 25.0),
-            child: _buildLoginButton(),
+      child: Center(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // App Logo or illustration placeholder
+                Icon(
+                  Icons.account_circle_rounded,
+                  size: 80,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+                const SizedBox(height: 16),
+                // Welcome text
+                Text(
+                  'Welcome',
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Log in to continue',
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                    color: Theme.of(context).colorScheme.outline,
+                  ),
+                ),
+                const SizedBox(height: 40),
+                _buildEmailField(),
+                const SizedBox(height: 16),
+                _buildPasswordField(),
+                _forgotPasswordField(),
+                const SizedBox(height: 32),
+                _buildLoginButton(),
+                const SizedBox(height: 24),
+                _buildRegisterLink(),
+              ],
+            ),
           ),
-        ],
+        ),
       ),
     );
   }
 
   Widget _forgotPasswordField() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 25.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          TextButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => const ForgotPasswordPage(),
-                ),
-              );
-            },
-            child:
-              Text(
-                'Forgot Password?',
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.primary,
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+      padding: const EdgeInsets.only(top: 8.0),
+      child: Align(
+        alignment: Alignment.centerRight,
+        child: TextButton(
+          onPressed: () {
+            // Forgot password functionality
+          },
+          style: TextButton.styleFrom(
+            padding: EdgeInsets.zero,
+            minimumSize: const Size(10, 10),
+            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
           ),
-        ],
+          child: Text(
+            'Forgot Password?',
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.primary,
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
       ),
     );
   }
 
-  // Method to build the email input field
   Widget _buildEmailField() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 25.0),
-      child: TextFormField(
-        controller: widget.emailController,
-        keyboardType: TextInputType.emailAddress,
-        decoration: InputDecoration(
-          labelText: 'Email',
-          enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(
-              color: Theme.of(context).colorScheme.outline,
-            ),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(
-              color: Theme.of(context).colorScheme.primary,
-            ),
-          ),
-          fillColor: Colors.white,
-          filled: true,
+    return TextFormField(
+      controller: widget.emailController,
+      keyboardType: TextInputType.emailAddress,
+      cursorColor: Theme.of(context).colorScheme.primary,
+      decoration: InputDecoration(
+        labelText: 'Email',
+        hintText: 'email@ucr.ac.cr',
+        hintStyle: TextStyle(
+          color: Theme.of(
+            context,
+          ).colorScheme.onSurface.withAlpha((0.3 * 255).round()),
         ),
-        validator: UserValidator.validateEmail,
+        prefixIcon: Icon(
+          Icons.email_outlined,
+          color: Theme.of(context).colorScheme.outline,
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(
+            color: Theme.of(
+              context,
+            ).colorScheme.onSurface.withAlpha((0.3 * 255).round()),
+            width: 1.0,
+          ),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(
+            color: Theme.of(context).colorScheme.primary,
+            width: 2.0,
+          ),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(
+            color: Theme.of(context).colorScheme.error,
+            width: 1.0,
+          ),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(
+            color: Theme.of(context).colorScheme.error,
+            width: 2.0,
+          ),
+        ),
+        fillColor: Theme.of(context).colorScheme.surface,
+        filled: true,
+        labelStyle: TextStyle(color: Theme.of(context).colorScheme.outline),
+        floatingLabelStyle: TextStyle(
+          color: Theme.of(context).colorScheme.primary,
+        ),
       ),
+      validator: UserValidator.validateEmail,
     );
   }
 
-  // Method to build the password input field
   Widget _buildPasswordField() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 25.0),
-      child: TextFormField(
-        controller: widget.passwordController,
-        obscureText: !_isPasswordVisible,
-        decoration: InputDecoration(
-          labelText: 'Password',
-          enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(
-              color: Theme.of(context).colorScheme.outline,
-            ),
+    return TextFormField(
+      controller: widget.passwordController,
+      obscureText: !_isPasswordVisible,
+      cursorColor: Theme.of(context).colorScheme.primary,
+      decoration: InputDecoration(
+        labelText: 'Password',
+        prefixIcon: Icon(
+          Icons.lock_outline,
+          color: Theme.of(context).colorScheme.outline,
+        ),
+        suffixIcon: IconButton(
+          icon: Icon(
+            _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+            color: Theme.of(context).colorScheme.outline,
           ),
-          focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(
-              color: Theme.of(context).colorScheme.primary,
-            ),
-          ),
-          fillColor: Colors.white,
-          filled: true,
-          suffixIcon: IconButton(
-            icon: Icon(
-              _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
-            ),
-            onPressed: () {
-              setState(() {
-                _isPasswordVisible = !_isPasswordVisible;
-              });
-            },
+          onPressed: () {
+            setState(() {
+              _isPasswordVisible = !_isPasswordVisible;
+            });
+          },
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(
+            color: Theme.of(
+              context,
+            ).colorScheme.onSurface.withAlpha((0.3 * 255).round()),
+
+            width: 1.0,
           ),
         ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(
+            color: Theme.of(context).colorScheme.primary,
+            width: 2.0,
+          ),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(
+            color: Theme.of(context).colorScheme.error,
+            width: 1.0,
+          ),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(
+            color: Theme.of(context).colorScheme.error,
+            width: 2.0,
+          ),
+        ),
+        fillColor: Theme.of(context).colorScheme.surface,
+        filled: true,
+        labelStyle: TextStyle(color: Theme.of(context).colorScheme.outline),
+        floatingLabelStyle: TextStyle(
+          color: Theme.of(context).colorScheme.primary,
+        ),
       ),
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Please enter your password';
+        }
+        return null;
+      },
     );
   }
 
-  // Method to build the login button
+  // Modern elevated login button
   Widget _buildLoginButton() {
-    return LoginButton(
+    return PrimaryButton(
       onPressed: () {
         if (_formKey.currentState!.validate()) {
-          widget.onLogin(widget.emailController.text, widget.passwordController.text);
+          widget.onLogin(
+            widget.emailController.text,
+            widget.passwordController.text,
+          );
         }
       },
       isLoading: false,
-      text: Text(
-        'Login',
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 18,
-          fontWeight: FontWeight.bold,
+      text: 'Log In',
+      isEnabled: true,
+    );
+  }
+
+  // Registration link with enhanced design
+  Widget _buildRegisterLink() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(
+          "Don't have an account?",
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.outline,
+            fontSize: 14,
+          ),
         ),
-      ),
+        TextButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const RegisterPage()),
+            );
+          },
+          style: TextButton.styleFrom(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            minimumSize: const Size(10, 10),
+            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          ),
+          child: Text(
+            'Register',
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.primary,
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
