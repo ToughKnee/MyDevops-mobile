@@ -7,6 +7,7 @@ import 'package:mobile/src/auth/auth.dart';
 import 'package:mockito/mockito.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../bloc/login_bloc_test.mocks.dart';
+
 class MockLoginBloc extends MockBloc<LoginEvent, LoginState>
     implements LoginBloc {
   @override
@@ -47,8 +48,9 @@ void main() {
   });
 
   group('LoginPage', () {
-    testWidgets('renders LoginForm when LoginBloc is in initial state',
-        (WidgetTester tester) async {
+    testWidgets('renders LoginForm when LoginBloc is in initial state', (
+      WidgetTester tester,
+    ) async {
       whenListen(
         mockLoginBloc,
         Stream.fromIterable([LoginInitial()]),
@@ -84,8 +86,9 @@ void main() {
         ),
       );
 
-      expect(find.byType(Center), findsOneWidget);
+      expect(find.byType(CircularProgressIndicator), findsOneWidget);
     });
+    
     testWidgets('doesnt show login Form when LoginBloc is loading',
     (WidgetTester tester) async {
       whenListen(
@@ -107,8 +110,9 @@ void main() {
     }
     );
 
-    testWidgets('navigates to HomePage on LoginSuccess',
-        (WidgetTester tester) async {
+    testWidgets('navigates to HomePage on LoginSuccess', (
+      WidgetTester tester,
+    ) async {
       whenListen(
         mockLoginBloc,
         Stream.fromIterable([LoginSuccess(user: testUser)]),
@@ -128,8 +132,9 @@ void main() {
       expect(find.byType(Scaffold), findsOneWidget);
     });
 
-    testWidgets('shows error message on LoginFailure',
-        (WidgetTester tester) async {
+    testWidgets('shows error message on LoginFailure', (
+      WidgetTester tester,
+    ) async {
       whenListen(
         mockLoginBloc,
         Stream.fromIterable([LoginFailure(error: 'Invalid credentials')]),
@@ -148,8 +153,7 @@ void main() {
       expect(find.byType(ScaffoldMessenger), findsOneWidget);
     });
 
-    testWidgets('Displays HomePage Correctly', 
-    (WidgetTester tester) async {
+    testWidgets('Displays HomePage Correctly', (WidgetTester tester) async {
       LocalStorage.init();
       when(mockLocalStorage.userId).thenReturn(testUser.id);
       when(mockLocalStorage.userEmail).thenReturn(testUser.email);
@@ -169,74 +173,72 @@ void main() {
 
       expect(find.byType(HomePage), findsOneWidget);
     });
-    
-    testWidgets('redirects to LoginPage on LogoutSuccess',
-        (WidgetTester tester) async {
 
-          LocalStorage.init();
-          when(mockLocalStorage.userId).thenReturn(testUser.id);
-          when(mockLocalStorage.userEmail).thenReturn(testUser.email);
-
-         //  when(mockLoginBloc.state).thenReturn(LoginInitial());
-          whenListen(
-            mockLogoutBloc,
-            Stream.fromIterable([LogoutInitial(), LogoutSuccess()]),
-            initialState: LogoutInitial(),
-          );
-          whenListen(
-            mockLoginBloc,
-            Stream.fromIterable([LoginInitial()]),
-            initialState: LoginInitial(),
-          );
-          await tester.pumpWidget(
-            MaterialApp(
-              home: MultiBlocProvider(
-                providers: [
-                  BlocProvider<LoginBloc>.value(value: mockLoginBloc),
-                  BlocProvider<LogoutBloc>.value(value: mockLogoutBloc),
-                ],
-                child: const HomePage(),
-              )
-            )
-          );
-
-          expect(find.byType(HomePage), findsOneWidget);
-          expect(find.byIcon(Icons.logout), findsOneWidget);
-
-          await tester.tap(find.byIcon(Icons.logout));
-          await tester.pumpAndSettle();
-          expect(find.byType(LoginForm), findsOne);
-    });
-
-    testWidgets('shows error on LogoutFailure', 
-    (WidgetTester tester) async {
-
+    testWidgets('redirects to LoginPage on LogoutSuccess', (
+      WidgetTester tester,
+    ) async {
       LocalStorage.init();
       when(mockLocalStorage.userId).thenReturn(testUser.id);
       when(mockLocalStorage.userEmail).thenReturn(testUser.email);
-      
-          whenListen(
-            mockLogoutBloc,
-            Stream.fromIterable([LogoutFailure('Logout failed')]),
-            initialState: LogoutFailure('Logout failed'),
-          );
-          whenListen(
-            mockLoginBloc,
-            Stream.fromIterable([LoginInitial()]),
-            initialState: LoginInitial(),
-          );
+
+      //  when(mockLoginBloc.state).thenReturn(LoginInitial());
+      whenListen(
+        mockLogoutBloc,
+        Stream.fromIterable([LogoutInitial(), LogoutSuccess()]),
+        initialState: LogoutInitial(),
+      );
+      whenListen(
+        mockLoginBloc,
+        Stream.fromIterable([LoginInitial()]),
+        initialState: LoginInitial(),
+      );
+      await tester.pumpWidget(
+        MaterialApp(
+          home: MultiBlocProvider(
+            providers: [
+              BlocProvider<LoginBloc>.value(value: mockLoginBloc),
+              BlocProvider<LogoutBloc>.value(value: mockLogoutBloc),
+            ],
+            child: const HomePage(),
+          ),
+        ),
+      );
+
+      expect(find.byType(HomePage), findsOneWidget);
+      expect(find.byIcon(Icons.logout), findsOneWidget);
+
+      await tester.tap(find.byIcon(Icons.logout));
+      await tester.pumpAndSettle();
+      expect(find.byType(LoginForm), findsOne);
+    });
+
+    testWidgets('shows error on LogoutFailure', (WidgetTester tester) async {
+      LocalStorage.init();
+      when(mockLocalStorage.userId).thenReturn(testUser.id);
+      when(mockLocalStorage.userEmail).thenReturn(testUser.email);
+
+      whenListen(
+        mockLogoutBloc,
+        Stream.fromIterable([LogoutFailure('Logout failed')]),
+        initialState: LogoutFailure('Logout failed'),
+      );
+      whenListen(
+        mockLoginBloc,
+        Stream.fromIterable([LoginInitial()]),
+        initialState: LoginInitial(),
+      );
 
       await tester.pumpWidget(
-            MaterialApp(
-              home: MultiBlocProvider(
-                providers: [
-                  BlocProvider<LoginBloc>.value(value: mockLoginBloc),
-                  BlocProvider<LogoutBloc>.value(value: mockLogoutBloc),
-                ],
-                child: const HomePage(),
-              )
-            )
-          );
+        MaterialApp(
+          home: MultiBlocProvider(
+            providers: [
+              BlocProvider<LoginBloc>.value(value: mockLoginBloc),
+              BlocProvider<LogoutBloc>.value(value: mockLogoutBloc),
+            ],
+            child: const HomePage(),
+          ),
+        ),
+      );
 
       expect(find.byType(ScaffoldMessenger), findsOneWidget);
     });

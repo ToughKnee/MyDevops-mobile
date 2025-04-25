@@ -18,7 +18,6 @@ class LoginRepositoryFirebase implements LoginRepository {
       final firebaseUser = userData.user;
 
       final firebaseIdToken = await firebaseUser!.getIdToken();
-
       if (firebaseIdToken == null) {
         throw AuthException('Failed authentication');
       }
