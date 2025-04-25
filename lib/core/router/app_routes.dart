@@ -14,7 +14,7 @@ import '../../src/settings/presenter/presenter.dart';
 final List<RouteBase> appRoutes = [
   GoRoute(
     path: Paths.login,
-    builder: (context, state) => const LoginScreen(),
+    builder: (context, state) => const LoginPage(),
     /* BLOC
     builder: (context, state) => BlocProvider.value(
       value: _blocValue,
@@ -24,7 +24,7 @@ final List<RouteBase> appRoutes = [
   ),
   GoRoute(
     path: Paths.register,
-    builder: (context, state) => const RegisterScreen(), 
+    builder: (context, state) => const RegisterPage(), 
   ),
   GoRoute(
     path: Paths.settings,
