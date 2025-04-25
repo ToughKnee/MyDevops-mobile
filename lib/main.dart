@@ -45,6 +45,7 @@ class MyApp extends StatelessWidget {
                 (context) => LoginBloc(
                   loginRepository: context.read<LoginRepository>(),
                   localStorage: LocalStorage(),
+                  tokensRepository: TokensRepositoryAPI(),
                 ),
           ),
           BlocProvider<LogoutBloc>(
