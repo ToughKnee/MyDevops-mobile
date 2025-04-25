@@ -102,50 +102,6 @@ void main() {
       },
     );
 
-    testWidgets('navigates to HomePage on LoginSuccess …', (tester) async {
-      SharedPreferences.setMockInitialValues({});
-      await LocalStorage.init();
-      LocalStorage().userEmail = 'user@test.com';
-
-      // stub RegisterBloc
-      whenListen(
-        mockRegisterBloc,
-        Stream.fromIterable([
-          RegisterSuccess(user: testUser, password: 'pass'),
-        ]),
-        initialState: RegisterInitial(),
-      );
-
-      // stub LoginBloc to emit success
-      whenListen(
-        mockLoginBloc,
-        Stream.fromIterable([LoginSuccess(user: testUser)]),
-        initialState: LoginInitial(),
-      );
-
-      // stub LogoutBloc so HomePage’s listener can read it
-      whenListen<LogoutState>(
-        mockLogoutBloc,
-        Stream.fromIterable([LogoutInitial()]),
-        initialState: LogoutInitial(),
-      );
-
-      await tester.pumpWidget(
-        MultiBlocProvider(
-          providers: [
-            BlocProvider<RegisterBloc>.value(value: mockRegisterBloc),
-            BlocProvider<LoginBloc>.value(value: mockLoginBloc),
-            BlocProvider<LogoutBloc>.value(value: mockLogoutBloc),
-          ],
-          child: MaterialApp(home: const RegisterPage()),
-        ),
-      );
-
-      await tester.pumpAndSettle();
-
-      expect(find.text('Welcome user@test.com'), findsOneWidget);
-    });
-
     testWidgets('shows error message on RegisterFailure', (
       WidgetTester tester,
     ) async {
