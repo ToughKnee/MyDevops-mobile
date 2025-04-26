@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:mobile/src/auth/auth.dart';
 import 'package:mobile/core/globals/globals.dart';
+import 'package:mobile/src/auth/auth.dart';
 
 class RegisterForm extends StatefulWidget {
   final TextEditingController nameController;
@@ -28,143 +28,146 @@ class RegisterFormState extends State<RegisterForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Form(
-      key: _formKey,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          _buildNameField(),
-          const SizedBox(height: 20),
-          _buildEmailField(),
-          const SizedBox(height: 20),
-          _buildPasswordField(),
-          const SizedBox(height: 20),
-          _buildConfirmPasswordField(),
-          const SizedBox(height: 20),
-          Container(
-            margin: const EdgeInsets.symmetric(horizontal: 25.0),
-            child: _buildRegisterButton(),
+    return Center(
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24.0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Icon(
+                  Icons.app_registration_rounded,
+                  size: 80,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'Create Account',
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Sign up to get started',
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                        color: Theme.of(context).colorScheme.outline,
+                      ),
+                ),
+                const SizedBox(height: 40),
+                _buildNameField(),
+                const SizedBox(height: 16),
+                _buildEmailField(),
+                const SizedBox(height: 16),
+                _buildPasswordField(),
+                const SizedBox(height: 16),
+                _buildConfirmPasswordField(),
+                const SizedBox(height: 32),
+                _buildRegisterButton(),
+              ],
+            ),
           ),
-        ],
+        ),
       ),
     );
   }
 
   Widget _buildNameField() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 25.0),
-      child: TextFormField(
-        controller: widget.nameController,
-        keyboardType: TextInputType.emailAddress,
-        decoration: InputDecoration(
-          labelText: 'Name',
-          enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(
-              color: Theme.of(context).colorScheme.outline,
-            ),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(
-              color: Theme.of(context).colorScheme.primary,
-            ),
-          ),
-          fillColor: Colors.white,
-          filled: true,
-        ),
-        validator: UserValidator.validateName,
-      ),
+    return TextFormField(
+      controller: widget.nameController,
+      decoration: _inputDecoration('Name', Icons.person_outline),
+      validator: UserValidator.validateName,
     );
   }
 
   Widget _buildEmailField() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 25.0),
-      child: TextFormField(
-        controller: widget.emailController,
-        keyboardType: TextInputType.emailAddress,
-        decoration: InputDecoration(
-          labelText: 'Email',
-          enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(
-              color: Theme.of(context).colorScheme.outline,
-            ),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(
-              color: Theme.of(context).colorScheme.primary,
-            ),
-          ),
-          fillColor: Colors.white,
-          filled: true,
-        ),
-        validator: UserValidator.validateEmail,
-      ),
+    return TextFormField(
+      controller: widget.emailController,
+      keyboardType: TextInputType.emailAddress,
+      decoration: _inputDecoration('Email', Icons.email_outlined),
+      validator: UserValidator.validateEmail,
     );
   }
 
   Widget _buildPasswordField() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 25.0),
-      child: TextFormField(
-        controller: widget.passwordController,
-        obscureText: !_isPasswordVisible,
-        decoration: InputDecoration(
-          labelText: 'Password',
-          enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(
-              color: Theme.of(context).colorScheme.outline,
-            ),
+    return TextFormField(
+      controller: widget.passwordController,
+      obscureText: !_isPasswordVisible,
+      decoration: _inputDecoration('Password', Icons.lock_outline).copyWith(
+        suffixIcon: IconButton(
+          icon: Icon(
+            _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+            color: Theme.of(context).colorScheme.outline,
           ),
-          focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(
-              color: Theme.of(context).colorScheme.primary,
-            ),
-          ),
-          fillColor: Colors.white,
-          filled: true,
-          suffixIcon: IconButton(
-            icon: Icon(
-              _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
-            ),
-            onPressed: () {
-              setState(() {
-                _isPasswordVisible = !_isPasswordVisible;
-              });
-            },
-          ),
+          onPressed: () {
+            setState(() {
+              _isPasswordVisible = !_isPasswordVisible;
+            });
+          },
         ),
-        validator: UserValidator.validatePass,
       ),
+      validator: UserValidator.validatePass,
     );
   }
 
   Widget _buildConfirmPasswordField() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 25.0),
-      child: TextFormField(
-        controller: widget.confirmPasswordController,
-        obscureText: !_isPasswordVisible,
-        decoration: InputDecoration(
-          labelText: 'Confirm Password',
-          enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(
-              color: Theme.of(context).colorScheme.outline,
-            ),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(
-              color: Theme.of(context).colorScheme.primary,
-            ),
-          ),
-          fillColor: Colors.white,
-          filled: true,
+    return TextFormField(
+      controller: widget.confirmPasswordController,
+      obscureText: !_isPasswordVisible,
+      decoration: _inputDecoration('Confirm Password', Icons.lock_outline),
+      validator: (value) {
+        if (value != widget.passwordController.text) {
+          return 'Passwords do not match';
+        }
+        return null;
+      },
+    );
+  }
+
+  InputDecoration _inputDecoration(String label, IconData icon) {
+    return InputDecoration(
+      labelText: label,
+      prefixIcon: Icon(
+        icon,
+        color: Theme.of(context).colorScheme.outline,
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(
+          color: Theme.of(context).colorScheme.onSurface.withAlpha((0.3 * 255).round()),
+          width: 1.0,
         ),
-        validator: (value) {
-          if (value != widget.passwordController.text) {
-            return 'Passwords do not match';
-          }
-          return null;
-        },
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(
+          color: Theme.of(context).colorScheme.primary,
+          width: 2.0,
+        ),
+      ),
+      errorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(
+          color: Theme.of(context).colorScheme.error,
+          width: 1.0,
+        ),
+      ),
+      focusedErrorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(
+          color: Theme.of(context).colorScheme.error,
+          width: 2.0,
+        ),
+      ),
+      fillColor: Theme.of(context).colorScheme.surface,
+      filled: true,
+      labelStyle: TextStyle(color: Theme.of(context).colorScheme.outline),
+      floatingLabelStyle: TextStyle(
+        color: Theme.of(context).colorScheme.primary,
       ),
     );
   }
