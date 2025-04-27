@@ -66,13 +66,7 @@ class _RegisterPageState extends State<RegisterPage> {
             ),
             BlocListener<LoginBloc, LoginState>(
               listener: (context, state) {
-                if (state is LoginSuccess) {
-                  Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(builder: (context) => const HomePage()),
-                    (route) => false,
-                  );
-                } else if (state is LoginFailure) {
+                if (state is LoginFailure) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text(state.error)),
                   );
