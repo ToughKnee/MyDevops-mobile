@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mobile/core/router/app_router.dart';
 import 'package:mobile/core/router/app_routes.dart';
@@ -89,6 +90,26 @@ void main() {
   }
 
   group('AppRouter Tests', () {
+    testWidgets('createRouter init correctly', (tester) async {
+    await tester.pumpWidget(
+      MultiProvider(
+        providers: [
+          Provider<LoginBloc>.value(value: mockLoginBloc),
+          ListenableProvider<RouterRefreshNotifier>.value(value: mockNotifier),
+        ],
+        child: Builder(
+          builder: (context) {
+            return MaterialApp.router(
+              routerConfig: createRouter(context),
+            );
+          },
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.byType(MaterialApp), findsOneWidget);
+    });
+    
     testWidgets('redirects to login if not authenticated', (tester) async {
       when(() => mockLoginBloc.state).thenReturn(LoginInitial());
 
