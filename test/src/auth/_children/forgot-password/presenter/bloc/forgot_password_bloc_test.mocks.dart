@@ -8,6 +8,7 @@ import 'dart:async' as _i3;
 import 'package:mobile/src/auth/_children/forgot-password/domain/repository/forgot_password.repository.dart'
     as _i2;
 import 'package:mockito/mockito.dart' as _i1;
+import 'package:mockito/src/dummies.dart' as _i4;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -33,11 +34,15 @@ class MockForgotPasswordRepository extends _i1.Mock
   }
 
   @override
-  _i3.Future<void> sendResetEmail(String? email) =>
+  _i3.Future<String> sendResetEmail(String? email) =>
       (super.noSuchMethod(
             Invocation.method(#sendResetEmail, [email]),
-            returnValue: _i3.Future<void>.value(),
-            returnValueForMissingStub: _i3.Future<void>.value(),
+            returnValue: _i3.Future<String>.value(
+              _i4.dummyValue<String>(
+                this,
+                Invocation.method(#sendResetEmail, [email]),
+              ),
+            ),
           )
-          as _i3.Future<void>);
+          as _i3.Future<String>);
 }

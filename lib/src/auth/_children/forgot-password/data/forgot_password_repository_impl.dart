@@ -1,3 +1,16 @@
+// import '../forgot_password.dart';
+
+// class ForgotPasswordRepositoryImpl implements ForgotPasswordRepository {
+//   final ForgotPasswordApi api;
+
+//   ForgotPasswordRepositoryImpl(this.api);
+
+//   @override
+//   Future<void> sendResetEmail(String email) async {
+//     await api.sendPasswordResetEmail(email);
+//   }
+// }
+
 import '../forgot_password.dart';
 
 class ForgotPasswordRepositoryImpl implements ForgotPasswordRepository {
@@ -6,7 +19,7 @@ class ForgotPasswordRepositoryImpl implements ForgotPasswordRepository {
   ForgotPasswordRepositoryImpl(this.api);
 
   @override
-  Future<void> sendResetEmail(String email) async {
-    await api.sendPasswordResetEmail(email);
+  Future<String> sendResetEmail(String email) {
+    return api.sendPasswordResetEmail(email);
   }
 }

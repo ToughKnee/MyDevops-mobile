@@ -17,8 +17,8 @@ class ForgotPasswordBloc extends Bloc<ForgotPasswordEvent, ForgotPasswordState> 
   ) async {
     emit(ForgotPasswordLoading());
     try {
-      await repository.sendResetEmail(event.email);
-      emit(ForgotPasswordSuccess());
+      final message = await repository.sendResetEmail(event.email);
+      emit(ForgotPasswordSuccess(message));
     } catch (e) {
       emit(ForgotPasswordFailure('Error: ${e.toString()}'));
     }

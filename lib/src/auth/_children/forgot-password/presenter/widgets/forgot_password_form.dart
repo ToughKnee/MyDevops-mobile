@@ -13,6 +13,7 @@ class ForgotPasswordForm extends StatefulWidget {
 class _ForgotPasswordFormState extends State<ForgotPasswordForm> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
+  bool _isLoading = false;
 
   @override
   void dispose() {
@@ -138,26 +139,32 @@ class _ForgotPasswordFormState extends State<ForgotPasswordForm> {
   }
 
   Widget _buildSubmitButton() {
-    return PrimaryButton(
-      onPressed: _onSubmit,
-      text: 'Send',
-      isEnabled: true,
-      isLoading: false,
-    );
-  }
+  return PrimaryButton(
+    onPressed: _isLoading ? () {} : _onSubmit,
+    text: 'Send',
+    isLoading: _isLoading,
+    isEnabled: !_isLoading,
+  );
+}
 
   @override
   Widget build(BuildContext context) {
     return BlocListener<ForgotPasswordBloc, ForgotPasswordState>(
       listener: (context, state) {
-        if (state is ForgotPasswordSuccess) {
-          _showDialog(
-            'Mail sent',
-            'Recovery mail sent successfully.',
-            success: true,
-          );
-        } else if (state is ForgotPasswordFailure) {
-          _showDialog('Error', state.message);
+        if (state is ForgotPasswordLoading) {
+          setState(() {
+            _isLoading = true;
+          });
+        } else {
+          setState(() {
+            _isLoading = false;
+          });
+
+          if (state is ForgotPasswordSuccess) {
+            _showDialog('Mail sent', state.message, success: true);
+          } else if (state is ForgotPasswordFailure) {
+            _showDialog('Error', state.message);
+          }
         }
       },
       child: Form(

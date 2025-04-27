@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
 
 import 'package:mobile/src/auth/auth.dart';
 
@@ -16,15 +16,15 @@ void main() {
     repository = ForgotPasswordRepositoryImpl(mockApi);
   });
 
-  test('sendResetEmail llama al método del API', () async {
+  test('sendResetEmail llama a sendPasswordResetEmail del API', () async {
     const email = 'test@ucr.ac.cr';
+    const serverResponse = 'Recovery mail sent successfully.';
 
-    // Simular que el método se ejecuta correctamente
-    when(mockApi.sendPasswordResetEmail(email)).thenAnswer((_) async {});
+    when(mockApi.sendPasswordResetEmail(email)).thenAnswer((_) async => serverResponse);
 
-    await repository.sendResetEmail(email);
+    final result = await repository.sendResetEmail(email);
 
-    // Verificar que se llamó correctamente
+    expect(result, equals(serverResponse));
     verify(mockApi.sendPasswordResetEmail(email)).called(1);
   });
 }

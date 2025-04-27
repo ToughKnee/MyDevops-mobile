@@ -1,28 +1,46 @@
+import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mobile/src/auth/_children/forgot-password/data/api/forgot_password_firebase.repository.dart';
+import 'package:http/http.dart' as http;
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-
-import 'package:mobile/src/auth/_children/forgot-password/data/api/forgot_password_firebase.repository.dart';
 
 import 'forgot_password_firebase.repository_test.mocks.dart';
 
-@GenerateMocks([FirebaseAuth])
+@GenerateMocks([http.Client])
 void main() {
-  late MockFirebaseAuth mockAuth;
+  late MockClient mockHttpClient;
+  late ForgotPasswordApi forgotPasswordApi;
 
   setUp(() {
-    mockAuth = MockFirebaseAuth();
+    mockHttpClient = MockClient();
+    forgotPasswordApi = ForgotPasswordApi(client: mockHttpClient);
   });
 
-  test('sendPasswordResetEmail llama al método de FirebaseAuth', () async {
-    const email = 'test@ucr.ac.cr';
-    final api = ForgotPasswordApi(auth: mockAuth);
+  group('ForgotPasswordApi', () {
+    test('devuelve mensaje si el POST es exitoso', () async {
+      when(mockHttpClient.post(
+        Uri.parse('http://157.230.224.13:3000/api/recover-password'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'email': 'correo@ucr.ac.cr'}),
+      )).thenAnswer((_) async => http.Response(jsonEncode({'message': 'Correo enviado'}), 200));
 
-    when(mockAuth.sendPasswordResetEmail(email: email)).thenAnswer((_) async {});
+      final result = await forgotPasswordApi.sendPasswordResetEmail('correo@ucr.ac.cr');
 
-    await api.sendPasswordResetEmail(email);
+      expect(result, 'Correo enviado');
+    });
 
-    verify(mockAuth.sendPasswordResetEmail(email: email)).called(1);
+    test('lanza excepción si el POST falla', () async {
+      when(mockHttpClient.post(
+        Uri.parse('http://157.230.224.13:3000/api/recover-password'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'email': 'correo@ucr.ac.cr'}),
+      )).thenAnswer((_) async => http.Response(jsonEncode({'error': 'Error al enviar'}), 400));
+
+      expect(
+        () async => await forgotPasswordApi.sendPasswordResetEmail('correo@ucr.ac.cr'),
+        throwsA(isA<Exception>()),
+      );
+    });
   });
 }
