@@ -100,7 +100,7 @@ class _RegisterPageState extends State<RegisterPage> with SingleTickerProviderSt
                 return FadeTransition(
                   opacity: _fadeAnimation!,
                   child: Stack(
-                    children: [
+                   children: [
                       if (state is! RegisterLoading)
                         RegisterForm(
                           nameController: _nameController,
@@ -115,7 +115,7 @@ class _RegisterPageState extends State<RegisterPage> with SingleTickerProviderSt
                         ),
                       if (state is RegisterLoading)
                         Container(
-                          color: Theme.of(context).colorScheme.onSurface.withAlpha((0.7 * 255).round()),
+                        color: Theme.of(context).colorScheme.surface,
                           child: const Center(child: CircularProgressIndicator()),
                         ),
                     ],
