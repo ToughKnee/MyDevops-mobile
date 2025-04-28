@@ -45,6 +45,7 @@ class MyApp extends StatelessWidget {
             create:
                 (context) => RegisterBloc(
                   registerRepository: context.read<RegisterRepository>(),
+                  registerAPIRepository: RegisterAPIRepository(),
                 ),
           ),
           BlocProvider<LoginBloc>(
