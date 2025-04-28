@@ -7,8 +7,12 @@ part 'register_state.dart';
 
 class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
   final RegisterRepository registerRepository;
+  final RegisterAPIRepository registerAPIRepository;
   
-  RegisterBloc({required this.registerRepository}) : super(RegisterInitial()) {
+  RegisterBloc({
+    required this.registerRepository,
+    required this.registerAPIRepository,
+  }) : super(RegisterInitial()) {
     on<RegisterSubmitted>(_onRegisterSubmitted);
     //on<RegisterEmailVerificationChecked>(_onRegisterEmailVerificationChecked);
   }
@@ -21,7 +25,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
 
     try {
       final user = await registerRepository.register(event.name, event.email, event.password);
-      //TODO BACKEND CALL
+      await registerAPIRepository.sendUserToBackend(user);
       emit(RegisterSuccess(user: user, password: event.password));
     } on AuthException catch (e) {
       final msg = e.message;
