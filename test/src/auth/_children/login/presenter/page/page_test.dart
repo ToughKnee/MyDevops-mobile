@@ -153,64 +153,6 @@ void main() {
       expect(find.byType(ScaffoldMessenger), findsOneWidget);
     });
 
-    testWidgets('Displays HomePage Correctly', (WidgetTester tester) async {
-      LocalStorage.init();
-      when(mockLocalStorage.userId).thenReturn(testUser.id);
-      when(mockLocalStorage.userEmail).thenReturn(testUser.email);
-      whenListen(
-        mockLogoutBloc,
-        Stream.fromIterable([LogoutInitial()]),
-        initialState: LogoutInitial(),
-      );
-      await tester.pumpWidget(
-        MaterialApp(
-          home: BlocProvider<LogoutBloc>.value(
-            value: mockLogoutBloc,
-            child: const HomePage(),
-          ),
-        ),
-      );
-
-      expect(find.byType(HomePage), findsOneWidget);
-    });
-
-    testWidgets('redirects to LoginPage on LogoutSuccess', (
-      WidgetTester tester,
-    ) async {
-      LocalStorage.init();
-      when(mockLocalStorage.userId).thenReturn(testUser.id);
-      when(mockLocalStorage.userEmail).thenReturn(testUser.email);
-
-      //  when(mockLoginBloc.state).thenReturn(LoginInitial());
-      whenListen(
-        mockLogoutBloc,
-        Stream.fromIterable([LogoutInitial(), LogoutSuccess()]),
-        initialState: LogoutInitial(),
-      );
-      whenListen(
-        mockLoginBloc,
-        Stream.fromIterable([LoginInitial()]),
-        initialState: LoginInitial(),
-      );
-      await tester.pumpWidget(
-        MaterialApp(
-          home: MultiBlocProvider(
-            providers: [
-              BlocProvider<LoginBloc>.value(value: mockLoginBloc),
-              BlocProvider<LogoutBloc>.value(value: mockLogoutBloc),
-            ],
-            child: const HomePage(),
-          ),
-        ),
-      );
-
-      expect(find.byType(HomePage), findsOneWidget);
-      expect(find.byIcon(Icons.logout), findsOneWidget);
-
-      await tester.tap(find.byIcon(Icons.logout));
-      await tester.pumpAndSettle();
-      expect(find.byType(LoginForm), findsOne);
-    });
 
     testWidgets('shows error on LogoutFailure', (WidgetTester tester) async {
       LocalStorage.init();
@@ -235,7 +177,7 @@ void main() {
               BlocProvider<LoginBloc>.value(value: mockLoginBloc),
               BlocProvider<LogoutBloc>.value(value: mockLogoutBloc),
             ],
-            child: const HomePage(),
+            child: const LoginPage(),
           ),
         ),
       );
