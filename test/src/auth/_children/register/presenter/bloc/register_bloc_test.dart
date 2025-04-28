@@ -4,11 +4,12 @@ import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mobile/src/auth/auth.dart';
 
-@GenerateMocks([RegisterRepository])
+@GenerateMocks([RegisterRepository, RegisterAPIRepository])
 import 'register_bloc_test.mocks.dart';
 
 void main() {
   late MockRegisterRepository mockRegisterRepository;
+  late MockRegisterAPIRepository mockRegisterAPIRepository;
   late RegisterBloc registerBloc;
   
   final testUser = AuthUserInfo(
@@ -20,9 +21,11 @@ void main() {
 
   setUp(() async {
     mockRegisterRepository = MockRegisterRepository();
+    mockRegisterAPIRepository = MockRegisterAPIRepository();
 
     registerBloc = RegisterBloc(
       registerRepository: mockRegisterRepository,
+      registerAPIRepository: mockRegisterAPIRepository,
     );
   });
 

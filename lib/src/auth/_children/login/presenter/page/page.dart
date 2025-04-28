@@ -108,9 +108,7 @@ class _LoginPageState extends State<LoginPage>
                     ),
                   if (state is LoginLoading)
                     Container(
-                      color: Theme.of(
-                        context,
-                      ).colorScheme.onSurface.withAlpha((0.7 * 255).round()),
+                      color: Theme.of(context).colorScheme.surface, // 👈 Igual que el fondo de la app
                       child: Center(
                         child: CircularProgressIndicator(
                           valueColor: AlwaysStoppedAnimation<Color>(

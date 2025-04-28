@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mobile/src/auth/_children/login/presenter/page/page.dart'; // Importante para regresar al Login
 import 'package:mobile/src/auth/auth.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -9,11 +10,30 @@ class RegisterPage extends StatefulWidget {
   State<RegisterPage> createState() => _RegisterPageState();
 }
 
-class _RegisterPageState extends State<RegisterPage> {
+class _RegisterPageState extends State<RegisterPage> with SingleTickerProviderStateMixin {
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
+
+  late AnimationController _animationController;
+  Animation<double>? _fadeAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 800),
+      vsync: this,
+    );
+
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeIn),
+    );
+
+    _animationController.forward();
+  }
 
   @override
   void dispose() {
@@ -21,82 +41,88 @@ class _RegisterPageState extends State<RegisterPage> {
     _emailController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
+    _animationController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          color: Colors.black,
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: const Text(
-          'Register',
-          style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        centerTitle: true,
-      ),
       backgroundColor: Theme.of(context).colorScheme.surface,
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: MultiBlocListener(
-          listeners: [
-            BlocListener<RegisterBloc, RegisterState>(
-              listener: (context, state) {
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        elevation: 0,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Theme.of(context).colorScheme.primary),
+          onPressed: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const LoginPage()),
+            );
+          },
+        ),
+      ),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: MultiBlocListener(
+            listeners: [
+              BlocListener<RegisterBloc, RegisterState>(
+                listener: (context, state) {
+                  if (state is RegisterSuccess) {
+                    context.read<LoginBloc>().add(
+                      LoginSubmitted(
+                        username: state.user.email,
+                        password: state.password,
+                      ),
+                    );
+                  } else if (state is RegisterFailure) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(state.error)),
+                    );
+                  }
+                },
+              ),
+              BlocListener<LoginBloc, LoginState>(
+                listener: (context, state) {
+                  if (state is LoginFailure) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(state.error)),
+                    );
+                  }
+                },
+              ),
+            ],
+            child: BlocBuilder<RegisterBloc, RegisterState>(
+              builder: (context, state) {
+                if (_fadeAnimation == null) return const SizedBox();
 
-                if (state is RegisterSuccess) {
-                  context.read<LoginBloc>().add(
-                    LoginSubmitted(
-                      username: state.user.email,
-                      password: state.password,
-                    ),
-                  );
-                } else if (state is RegisterFailure) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(state.error)),
-                  );
-                }
-              },
-            ),
-            BlocListener<LoginBloc, LoginState>(
-              listener: (context, state) {
-                if (state is LoginFailure) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(state.error)),
-                  );
-                }
-              },
-            ),
-          ],
-          child: BlocBuilder<RegisterBloc, RegisterState>(
-            builder: (context, state) {
-              if (state is RegisterLoading) {
-                return const Center(child: CircularProgressIndicator());
-              }
-
-              return Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  RegisterForm(
-                    nameController: _nameController,
-                    emailController: _emailController,
-                    passwordController: _passwordController,
-                    confirmPasswordController: _confirmPasswordController,
-                    onRegister: (name, email, password) {
-                      context.read<RegisterBloc>().add(
-                        RegisterSubmitted(name: name, email: email, password: password),
-                      );
-                    },
+                return FadeTransition(
+                  opacity: _fadeAnimation!,
+                  child: Stack(
+                   children: [
+                      if (state is! RegisterLoading)
+                        RegisterForm(
+                          nameController: _nameController,
+                          emailController: _emailController,
+                          passwordController: _passwordController,
+                          confirmPasswordController: _confirmPasswordController,
+                          onRegister: (name, email, password) {
+                            context.read<RegisterBloc>().add(
+                              RegisterSubmitted(name: name, email: email, password: password),
+                            );
+                          },
+                        ),
+                      if (state is RegisterLoading)
+                        Container(
+                        color: Theme.of(context).colorScheme.surface,
+                          child: const Center(child: CircularProgressIndicator()),
+                        ),
+                    ],
                   ),
-                ],
-              );
-            },
+                );
+              },
+            ),
           ),
         ),
       ),
