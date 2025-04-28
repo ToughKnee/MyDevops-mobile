@@ -18,27 +18,40 @@ void main() {
   });
 
   group('ForgotPasswordApi', () {
-    test('devuelve mensaje si el POST es exitoso', () async {
-      when(mockHttpClient.post(
-        Uri.parse('http://157.230.224.13:3000/api/recover-password'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'email': 'correo@ucr.ac.cr'}),
-      )).thenAnswer((_) async => http.Response(jsonEncode({'message': 'Correo enviado'}), 200));
+    test('should return success if the POST is successful', () async {
+      when(
+        mockHttpClient.post(
+          Uri.parse('http://157.230.224.13:3000/api/recover-password'),
+          headers: {'Content-Type': 'application/json'},
+          body: jsonEncode({'email': 'correo@ucr.ac.cr'}),
+        ),
+      ).thenAnswer(
+        (_) async =>
+            http.Response(jsonEncode({'message': 'Correo enviado'}), 200),
+      );
 
-      final result = await forgotPasswordApi.sendPasswordResetEmail('correo@ucr.ac.cr');
+      final result = await forgotPasswordApi.sendPasswordResetEmail(
+        'correo@ucr.ac.cr',
+      );
 
       expect(result, 'Correo enviado');
     });
 
-    test('lanza excepción si el POST falla', () async {
-      when(mockHttpClient.post(
-        Uri.parse('http://157.230.224.13:3000/api/recover-password'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'email': 'correo@ucr.ac.cr'}),
-      )).thenAnswer((_) async => http.Response(jsonEncode({'error': 'Error al enviar'}), 400));
+    test('should return error if the POST fails', () async {
+      when(
+        mockHttpClient.post(
+          Uri.parse('http://157.230.224.13:3000/api/recover-password'),
+          headers: {'Content-Type': 'application/json'},
+          body: jsonEncode({'email': 'correo@ucr.ac.cr'}),
+        ),
+      ).thenAnswer(
+        (_) async =>
+            http.Response(jsonEncode({'error': 'Error al enviar'}), 400),
+      );
 
       expect(
-        () async => await forgotPasswordApi.sendPasswordResetEmail('correo@ucr.ac.cr'),
+        () async =>
+            await forgotPasswordApi.sendPasswordResetEmail('correo@ucr.ac.cr'),
         throwsA(isA<Exception>()),
       );
     });

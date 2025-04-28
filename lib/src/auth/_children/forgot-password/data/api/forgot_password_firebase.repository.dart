@@ -10,9 +10,7 @@ class ForgotPasswordApi {
   Future<String> sendPasswordResetEmail(String email) async {
     final response = await _client.post(
       Uri.parse(_endpoint),
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'email': email}),
     );
 
@@ -21,7 +19,7 @@ class ForgotPasswordApi {
       return json['message'] ?? 'Recovery email sent successfully';
     } else {
       final json = jsonDecode(response.body);
-      throw Exception(json['error'] ?? 'No se logró enviar el correo de recuperación.');
+      throw Exception(json['error'] ?? 'Failed to send recovery email');
     }
   }
 }
