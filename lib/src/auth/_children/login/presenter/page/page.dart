@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mobile/core/core.dart';
 import 'package:mobile/src/auth/auth.dart';
 
 class LoginPage extends StatefulWidget {
@@ -108,7 +107,7 @@ class _LoginPageState extends State<LoginPage>
                     ),
                   if (state is LoginLoading)
                     Container(
-                      color: Theme.of(context).colorScheme.surface, // 👈 Igual que el fondo de la app
+                      color: Theme.of(context).colorScheme.surface,
                       child: Center(
                         child: CircularProgressIndicator(
                           valueColor: AlwaysStoppedAnimation<Color>(
@@ -126,4 +125,3 @@ class _LoginPageState extends State<LoginPage>
     );
   }
 }
-

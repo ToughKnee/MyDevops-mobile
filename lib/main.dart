@@ -1,14 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:mobile/core/storage/user_session.storage.dart';
 import 'package:mobile/src/auth/auth.dart';
 import 'package:mobile/src/auth/_children/_children.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'core/core.dart';
-import 'core/router/router_utils.dart';
-import 'core/theme/theme.dart';
 import 'firebase_options.dart';
 
 void main() async {
