@@ -81,7 +81,11 @@ class LoginFormState extends State<LoginForm> {
         alignment: Alignment.centerRight,
         child: TextButton(
           onPressed: () {
-            // Forgot password functionality
+            Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (_) => const ForgotPasswordPage(),
+            ),
+          );
           },
           style: TextButton.styleFrom(
             padding: EdgeInsets.zero,
