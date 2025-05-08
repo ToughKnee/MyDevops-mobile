@@ -13,6 +13,12 @@ on:
     branches:
       - main
       - develop
+  workflow_dispatch:
+    inputs:
+      build-new-version:
+        description: 'Build now and deploy the app'
+        default: 'true'
+        required: false
 
 jobs:
   test-and-coverage:
